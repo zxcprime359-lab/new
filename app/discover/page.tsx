@@ -1,6 +1,10 @@
-"use client";
+import { Suspense } from "react";
 import ExploreTmdb from "@/app/explore";
 
 export default function DiscoverMovies() {
-  return <ExploreTmdb media_type="movie" />;
+  return (
+    <Suspense>
+      <ExploreTmdb media_type="movie" />
+    </Suspense>
+  );
 }

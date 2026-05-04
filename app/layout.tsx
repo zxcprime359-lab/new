@@ -2,10 +2,19 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit, Oxanium } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import ReactQueryProvider from "./provider-react-query";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Navigation from "./navigation";
+import NextAuthProvider from "./provider-next-auth";
+import { Toaster } from "sonner";
+import SearchModal from "./search-modal";
+const oxaniumHeading = Oxanium({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-const oxaniumHeading = Oxanium({subsets:['latin'],variable:'--font-heading'});
-
-const outfit = Outfit({subsets:['latin'],variable:'--font-sans'});
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,15 +33,68 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
+  player,
+  login,
+  settings,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
+  player: React.ReactNode;
+  login: React.ReactNode;
+  settings: React.ReactNode;
 }>) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", outfit.variable, oxaniumHeading.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        outfit.variable,
+        oxaniumHeading.variable,
+      )}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col custom-scrollbar">
+        <ReactQueryProvider>
+          <NextAuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <TooltipProvider>
+                <div className="">
+                  <Navigation />
+                  <SearchModal />
+                  {/* <div className="absolute top-0 inset-x-0 z-20 flex justify-end items-center p-8 gap-3">
+                  <div className="w-sm">
+                    <Input placeholder="Search your favorite ..." />
+                  </div>
+                  <div className="size-8.5 ">
+                    <img
+                      className="h-full w-full object-contain rounded-sm"
+                      src={logo.src}
+                      alt=""
+                    />
+                  </div>
+                </div> */}
+                  {children}
+                </div>
+                {modal}
+                {player}
+                {login}
+                {settings}
+                <Toaster />
+              </TooltipProvider>
+            </ThemeProvider>
+          </NextAuthProvider>
+        </ReactQueryProvider>
+      </body>
     </html>
   );
 }

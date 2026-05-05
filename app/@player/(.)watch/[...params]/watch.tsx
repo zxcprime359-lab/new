@@ -32,9 +32,9 @@ export default function WatchPage({
 
   const handleCloseDrawer = (value: boolean) => {
     setOpen(value);
-
     if (!value) setTimeout(() => router.back(), 300);
   };
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== "https://zxcstream.xyz") return;
@@ -42,7 +42,7 @@ export default function WatchPage({
       const { type, payload } = event.data;
 
       if (type === "METADATA") {
-        console.log("playload", payload);
+        console.log("payload", payload);
         metadataRef.current = payload;
       }
 
@@ -68,9 +68,29 @@ export default function WatchPage({
             duration_seconds: duration || null,
           });
         }
+      }
 
+      if (type === "VIDEO_NINETY_PERCENT") {
+        const duration = payload.duration
+          ? Math.floor(Number(payload.duration))
+          : 0;
+        const meta = metadataRef.current || {};
 
-        
+        if (hasActiveProfile) {
+          finishWatching({
+            tmdb_id: id,
+            media_type,
+            season: media_type === "tv" ? season : 0,
+            episode: media_type === "tv" ? episode : 0,
+            title: meta.title ?? id,
+            released_date: meta.year ?? null,
+            main_genre: meta.genre ?? null,
+            poster_path: meta.poster ?? null,
+            backdrop_path: meta.backdrop ?? null,
+            watched_seconds: duration,
+            duration_seconds: duration,
+          });
+        }
       }
 
       if (type === "VIDEO_ENDED") {
@@ -79,10 +99,7 @@ export default function WatchPage({
     };
 
     window.addEventListener("message", handleMessage);
-
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
+    return () => window.removeEventListener("message", handleMessage);
   }, []);
 
   return (

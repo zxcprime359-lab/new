@@ -1,4 +1,9 @@
+import { Suspense } from "react";
 import ExploreTmdb from "../explore";
 export default function TVShows() {
-  return <ExploreTmdb media_type="tv" />;
+  return (
+    <Suspense>
+      <ExploreTmdb media_type="tv" />
+    </Suspense>
+  );
 }

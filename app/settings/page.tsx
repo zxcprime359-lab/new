@@ -193,7 +193,7 @@ export default function SettingsPage() {
                   <p className="text-muted-foreground">Download the app</p>
                 </header>
                 <div className="flex justify-center items-center h-full">
-                  <InstallButton />
+                  <InstallButton />1
                 </div>
               </div>
             )}

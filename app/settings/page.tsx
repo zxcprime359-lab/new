@@ -25,6 +25,7 @@ import { CardStyle, LayoutDensity, useSettingsStore } from "@/store/settings";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import InstallButton from "@/components/ui/install";
 
 /* Tailwind-safe colors */
 const ACCENT_CLASSES = {
@@ -192,10 +193,7 @@ export default function SettingsPage() {
                   <p className="text-muted-foreground">Download the app</p>
                 </header>
                 <div className="flex justify-center items-center h-full">
-                  <Button variant="outline">
-                    <Download />
-                    INSTALL
-                  </Button>
+                  <InstallButton />
                 </div>
               </div>
             )}

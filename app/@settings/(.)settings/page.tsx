@@ -1,5 +1,5 @@
-import SettingsPage from "@/app/settings/settings";
+import SettingsMain from "@/app/settings/page";
 
 export default function SettingsModal() {
-  return <SettingsPage />;
+  return <SettingsMain />;
 }

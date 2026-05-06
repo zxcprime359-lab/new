@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import SettingsPage from "./settings";
 
-export default async function HistoryHome() {
+export default async function SettingsMain() {
   const session = await getServerSession(authOptions);
   const hasActiveProfile = !!session?.user?.activeProfileId;
 

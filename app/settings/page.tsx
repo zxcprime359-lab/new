@@ -21,10 +21,16 @@ import {
 } from "@/components/ui/select";
 
 import { ThemeModeToggle } from "@/components/ui/theme";
-import { CardStyle, LayoutDensity, useSettingsStore } from "@/store/settings";
+import {
+  CardStyle,
+  LayoutDensity,
+  LowDataMode,
+  Toggle,
+  useSettingsStore,
+} from "@/store/settings";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, RefreshCcw } from "lucide-react";
 import InstallButton from "@/components/ui/install";
 
 /* Tailwind-safe colors */
@@ -40,7 +46,8 @@ export default function SettingsPage() {
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const [tab, setTab] = useState("appearance");
-  const { accent, density, style, set } = useSettingsStore();
+  const { accent, density, style, set, adToggle, lowDataMode, saveHistory } =
+    useSettingsStore();
 
   const handleClose = (value: boolean) => {
     setOpen(value);
@@ -57,40 +64,45 @@ export default function SettingsPage() {
 
         <div className="flex w-4xl">
           {/* Sidebar */}
-          <aside className="w-64 py-4 space-y-6">
-            <h1 className="text-xl font-medium">Settings</h1>
+          <aside className="w-64 py-4  flex flex-col justify-between">
+            <div className="space-y-6">
+              <h1 className="text-xl font-medium">Settings</h1>
 
-            <nav className="flex flex-col">
-              {[
-                {
-                  label: "Appearance",
-                  id: "appearance",
-                },
-                {
-                  label: "Install",
-                  id: "install",
-                },
-                {
-                  label: "Performance & Data",
-                  id: "performance",
-                },
-                {
-                  label: "Cache Settings",
-                  id: "cache",
-                },
-              ].map((item, i) => (
-                <span
-                  key={item.id}
-                  className={cn(
-                    "px-4 py-3 border-l cursor-pointer",
-                    tab === item.id ? "border-red-600" : "",
-                  )}
-                  onClick={() => setTab(item.id)}
-                >
-                  {item.label}
-                </span>
-              ))}
-            </nav>
+              <nav className="flex flex-col">
+                {[
+                  {
+                    label: "Appearance",
+                    id: "appearance",
+                  },
+
+                  {
+                    label: "Performance & Data",
+                    id: "performance",
+                  },
+
+                  {
+                    label: "Privacy & Control",
+                    id: "privacy",
+                  },
+                  {
+                    label: "Install",
+                    id: "install",
+                  },
+                ].map((item, i) => (
+                  <span
+                    key={item.id}
+                    className={cn(
+                      "px-4 py-3 border-l cursor-pointer",
+                      tab === item.id ? "border-red-600" : "",
+                    )}
+                    onClick={() => setTab(item.id)}
+                  >
+                    {item.label}
+                  </span>
+                ))}
+              </nav>
+            </div>
+            <p className="text-sm font-medium text-muted-foreground">v.1.0.0</p>
           </aside>
 
           {/* Content */}
@@ -189,17 +201,162 @@ export default function SettingsPage() {
             {tab === "install" && (
               <div className="h-full">
                 <header>
-                  <h1 className="text-lg">Install Progressive Web App</h1>
-                  <p className="text-muted-foreground">Download the app</p>
+                  <h1 className="text-lg">Install App</h1>
+                  <p className="text-muted-foreground">
+                    Install this app on your device for a better experience
+                  </p>
                 </header>
-                <div className="flex justify-center items-center h-full">
-                  <InstallButton />1
+
+                <div className="grid place-items-center h-full ">
+                  <InstallButton />
+
+                  <div className="text-center space-y-2 max-w-md">
+                    <p className="text-sm text-muted-foreground">
+                      If the install button doesn’t work, try this:
+                    </p>
+
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Open in Chrome (Android / Desktop)</li>
+                      <li>• Tap the browser menu (⋮)</li>
+                      <li>• Select “Add to Home screen” or “Install app”</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             )}
 
-            {tab === "performance" && <>soon</>}
-            {tab === "cache" && <>soon</>}
+            {tab === "performance" && (
+              <div>
+                <header>
+                  <h1 className="text-lg">Performance and Data</h1>
+                  <p className="text-muted-foreground">
+                    Control how the app uses data and system resources
+                  </p>
+                </header>
+
+                <div className="divide-y mt-6">
+                  <SettingRow
+                    title="Advertisements"
+                    description="Ads help support and keep the website running"
+                  >
+                    <Select
+                      value={adToggle}
+                      onValueChange={(v: Toggle) => set("adToggle", v)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="on">ON</SelectItem>
+                          <SelectItem value="off">OFF</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </SettingRow>
+                  <SettingRow
+                    title="Data Saver"
+                    description="Reduce data usage by lowering quality and disabling previews"
+                  >
+                    <Select
+                      value={lowDataMode}
+                      onValueChange={(v: LowDataMode) => set("lowDataMode", v)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="mid">Mid</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </SettingRow>
+                </div>
+              </div>
+            )}
+
+            {tab === "privacy" && (
+              <div>
+                <header>
+                  <h1 className="text-lg">Privacy and Control</h1>
+                  <p className="text-muted-foreground">
+                    Manage your data, history, and tracking preferences
+                  </p>
+                </header>
+
+                <div className="divide-y mt-6">
+                  <SettingRow
+                    title="Watch History"
+                    description="Keep track of movies and shows you've watched"
+                  >
+                    <Select
+                      value={saveHistory}
+                      onValueChange={(v: Toggle) => set("saveHistory", v)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="on">ON</SelectItem>
+                          <SelectItem value="off">OFF</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </SettingRow>
+                  <SettingRow
+                    title="Recommendations"
+                    description="Use your watch history to suggest movies and shows"
+                  >
+                    <Select
+                      value={saveHistory}
+                      onValueChange={(v: Toggle) => set("saveHistory", v)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="on">ON</SelectItem>
+                          <SelectItem value="off">OFF</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </SettingRow>
+                  <SettingRow
+                    title="Continue Watching"
+                    description="Sync your watch progress across devices"
+                  >
+                    <Select
+                      value={saveHistory}
+                      onValueChange={(v: Toggle) => set("saveHistory", v)}
+                    >
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="on">ON</SelectItem>
+                          <SelectItem value="off">OFF</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </SettingRow>
+                  <div className="flex items-center justify-between py-4">
+                    <div>
+                      <h1 className="text-base">Clear History</h1>
+                      <p className="text-muted-foreground"></p>
+                    </div>
+                    <Button variant="secondary">
+                      Clear All <RefreshCcw />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </DialogContent>

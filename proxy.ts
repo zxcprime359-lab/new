@@ -12,12 +12,13 @@ export async function proxy(req: NextRequest) {
 
   const isLoginPage = pathname === "/login";
   const isProfileSelect = pathname.startsWith("/login/profiles");
-
+  const isProtectedRoute = pathname === "/history" || pathname === "/watchlist";
   // 1. Not logged in → block profile selection only
-  if (!token && isProfileSelect) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  if (!token) {
+    if (isProfileSelect || isProtectedRoute) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
   }
-
   // 2. All logged-in rules
   if (token) {
     // Profile selected → block /login and /login/profiles

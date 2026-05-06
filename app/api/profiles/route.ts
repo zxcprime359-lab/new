@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { createClient } from "@supabase/supabase-js";
 import { authOptions } from "@/lib/auth";
-
+import bcrypt from "bcryptjs";
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL_AUTH!,
   process.env.SUPABASE_SERVICE_ROLE_KEY_AUTH!,
@@ -20,7 +20,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("watch_profiles")
-    .select("id, name, avatar_type, is_kids, pin_hash, has_pin, created_at")
+    .select("id, name, avatar_type, is_kids, has_pin, created_at")
     .eq("user_google_id", google_id)
     .order("created_at", { ascending: true });
 
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-
+  const pin_hash = pin ? await bcrypt.hash(pin, 10) : null;
   const { data, error } = await supabase
     .from("watch_profiles")
     .insert({
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       avatar_type,
       is_kids,
-      pin_hash: pin ?? null,
+      pin_hash,
       has_pin: !!pin,
     })
     .select("id, name, avatar_type, is_kids, pin_hash, has_pin, created_at")
@@ -139,14 +139,14 @@ export async function PATCH(req: NextRequest) {
       { status: 400 },
     );
   }
-
+  const pin_hash = pin ? await bcrypt.hash(pin, 10) : null;
   const { data, error } = await supabase
     .from("watch_profiles")
     .update({
       name: name.trim(),
       avatar_type,
       is_kids,
-      pin_hash: pin ?? null, // (still no hashing for now)
+      pin_hash, // (still no hashing for now)
       has_pin: !!pin,
     })
     .eq("id", id)

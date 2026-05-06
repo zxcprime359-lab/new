@@ -379,7 +379,7 @@ export default function WhoIsWatching() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <Button onClick={() => signOut({ callbackUrl: "/login" })}>
+                <Button onClick={() => signOut({ callbackUrl: "/" })}>
                   Log out <LogOut />
                 </Button>
               </AlertDialogFooter>

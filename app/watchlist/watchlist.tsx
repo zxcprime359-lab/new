@@ -30,7 +30,7 @@ export default function Watchlist() {
   const filteredCompleted = filterByTab(data);
 
   return (
-    <div className=" pl-35 pr-8 ">
+    <div className=" lg:pl-35 pl-2 lg:pr-8 pr-2 mt-20 ">
       <div className=" min-h-screen mt-8 ">
         <TitleReusable
           title="Watchlist"

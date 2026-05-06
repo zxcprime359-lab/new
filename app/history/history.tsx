@@ -35,7 +35,7 @@ export default function History() {
   const filteredCompleted = filterByTab(history);
 
   return (
-    <div className="pl-35 pr-8">
+    <div className=" lg:pl-35 pl-2 lg:pr-8 pr-2 mt-20 ">
       <div className="fixed bottom-8 right-8">
         <Button
           variant="destructive"

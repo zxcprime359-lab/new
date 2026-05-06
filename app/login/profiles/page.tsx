@@ -387,17 +387,17 @@ export default function WhoIsWatching() {
           </AlertDialog>
         </span>
       </div>
-      <h1 className="text-white text-5xl font-light mb-12 tracking-wide">
+      <h1 className="text-white lg:text-5xl text-2xl font-light mb-12 tracking-wide">
         {isManaging ? "Manage Profiles" : "Who's watching?"}
       </h1>
-      <div className="flex flex-wrap justify-center gap-6 mb-12 max-w-3xl">
+      <div className="flex flex-wrap justify-center lg:gap-6 mb-12 max-w-3xl">
         {profiles.map((profile) => (
           <div
             key={profile.id}
-            className="flex flex-col items-center cursor-pointer group w-36"
+            className="flex flex-col items-center cursor-pointer group lg:w-36 w-25"
             onClick={() => handleProfileClick(profile)}
           >
-            <div className="relative w-36 h-36 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden">
+            <div className="relative lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden">
               {AVATAR_MAP[profile.avatar_type]}
               {isManaging && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -420,7 +420,7 @@ export default function WhoIsWatching() {
             className="flex flex-col items-center cursor-pointer group w-36"
             onClick={() => setView("adding")}
           >
-            <div className="w-36 h-36 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden flex justify-center items-center">
+            <div className="lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden flex justify-center items-center">
               <Plus className="size-10 text-[#6D6D6D] group-hover:text-white transition-colors duration-300" />
             </div>
             <span className="mt-4 text-base text-[#6D6D6D] group-hover:text-white transition-colors duration-300 text-center leading-snug">

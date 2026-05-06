@@ -90,23 +90,26 @@ export default function SettingsPage({
                   {
                     label: "Privacy & Control",
                     id: "privacy",
+                    hide: !hasActiveProfile,
                   },
                   {
                     label: "Install",
                     id: "install",
                   },
-                ].map((item, i) => (
-                  <span
-                    key={item.id}
-                    className={cn(
-                      "px-4 py-3 border-l cursor-pointer",
-                      tab === item.id ? "border-red-600" : "",
-                    )}
-                    onClick={() => setTab(item.id)}
-                  >
-                    {item.label}
-                  </span>
-                ))}
+                ]
+                  .filter((item) => !item.hide)
+                  .map((item, i) => (
+                    <span
+                      key={item.id}
+                      className={cn(
+                        "px-4 py-3 border-l cursor-pointer",
+                        tab === item.id ? "border-red-600" : "",
+                      )}
+                      onClick={() => setTab(item.id)}
+                    >
+                      {item.label}
+                    </span>
+                  ))}
               </nav>
             </div>
             <p className="text-sm font-medium text-muted-foreground">v.1.0.0</p>
@@ -242,27 +245,29 @@ export default function SettingsPage({
                 </header>
 
                 <div className="divide-y mt-6">
-                  <SettingRow
-                    title="Advertisements"
-                    description="Ads help support and keep the website running"
-                  >
-                    <Select
-                      value={settings.ads ? "on" : "off"}
-                      onValueChange={(v) =>
-                        updateSettings({ ...settings, ads: v === "on" })
-                      }
+                  {hasActiveProfile && (
+                    <SettingRow
+                      title="Advertisements"
+                      description="Ads help support and keep the website running"
                     >
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="on">ON</SelectItem>
-                          <SelectItem value="off">OFF</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </SettingRow>
+                      <Select
+                        value={settings.ads ? "on" : "off"}
+                        onValueChange={(v) =>
+                          updateSettings({ ...settings, ads: v === "on" })
+                        }
+                      >
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="on">ON</SelectItem>
+                            <SelectItem value="off">OFF</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </SettingRow>
+                  )}
                   <SettingRow
                     title="Data Saver"
                     description="Reduce data usage by lowering quality and disabling previews"

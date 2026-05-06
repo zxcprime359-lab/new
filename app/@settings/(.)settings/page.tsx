@@ -1,4 +1,4 @@
-import SettingsPage from "@/app/settings/page";
+import SettingsPage from "@/app/settings/settings";
 
 export default function SettingsModal() {
   return <SettingsPage />;

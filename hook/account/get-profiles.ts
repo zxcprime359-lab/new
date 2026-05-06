@@ -38,7 +38,6 @@ export function useProfiles() {
       const res = await axios.get<GetProfilesResponse>("/api/profiles");
       return res.data.profiles;
     },
-    
   });
 
   // ✅ CREATE profile

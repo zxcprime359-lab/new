@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!data.has_pin) {
-    return NextResponse.json({ success: true });21
+    return NextResponse.json({ success: true });
   }
 
   const isValid = pin === data.pin_hash;

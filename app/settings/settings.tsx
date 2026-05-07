@@ -63,19 +63,19 @@ export default function SettingsPage({
   console.log(settings, "xxx");
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[calc(100%-20px)] lg:w-fit p-4">
+      <DialogContent className="w-[calc(100%-20px)] lg:w-fit lg:p-4 p-2">
         <DialogHeader className="sr-only">
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Customize your movie experience</DialogDescription>
         </DialogHeader>
 
-        <div className="flex w-4xl">
+        <div className="flex flex-col lg:flex-row lg:w-4xl">
           {/* Sidebar */}
-          <aside className="w-64 py-4  flex flex-col justify-between">
+          <aside className="lg:w-64 lg:py-4 py-2  flex flex-col justify-between">
             <div className="space-y-6">
-              <h1 className="text-xl font-medium">Settings</h1>
+              <h1 className="lg:text-xl text-lg font-medium">Settings</h1>
 
-              <nav className="flex flex-col">
+              <nav className="flex lg:flex-col overflow-x-auto">
                 {[
                   {
                     label: "Appearance",
@@ -102,7 +102,7 @@ export default function SettingsPage({
                     <span
                       key={item.id}
                       className={cn(
-                        "px-4 py-3 border-l cursor-pointer",
+                        "lg:px-4 px-2 lg:py-3 py-1.5 lg:border-l border-b cursor-pointer lg:text-base text-sm",
                         tab === item.id ? "border-red-600" : "",
                       )}
                       onClick={() => setTab(item.id)}
@@ -112,7 +112,9 @@ export default function SettingsPage({
                   ))}
               </nav>
             </div>
-            <p className="text-sm font-medium text-muted-foreground">v.1.0.0</p>
+            <p className="text-sm font-medium text-muted-foreground hidden lg:block">
+              v.1.0.0
+            </p>
           </aside>
 
           {/* Content */}
@@ -120,8 +122,8 @@ export default function SettingsPage({
             {tab === "appearance" && (
               <div>
                 <header>
-                  <h1 className="text-lg">Appearance</h1>
-                  <p className="text-muted-foreground">
+                  <h1 className="lg:text-lg text-base">Appearance</h1>
+                  <p className="text-muted-foreground lg:text-base text-sm">
                     Customize how the app looks and feels
                   </p>
                 </header>
@@ -167,7 +169,7 @@ export default function SettingsPage({
                       value={density}
                       onValueChange={(v: LayoutDensity) => set("density", v)}
                     >
-                      <SelectTrigger className="w-40">
+                      <SelectTrigger className="lg:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -191,7 +193,7 @@ export default function SettingsPage({
                       value={style}
                       onValueChange={(v: CardStyle) => set("style", v)}
                     >
-                      <SelectTrigger className="w-40">
+                      <SelectTrigger className="lg:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -211,8 +213,8 @@ export default function SettingsPage({
             {tab === "install" && (
               <div className="h-full">
                 <header>
-                  <h1 className="text-lg">Install App</h1>
-                  <p className="text-muted-foreground">
+                  <h1 className="lg:text-lg text-base">Install App</h1>
+                  <p className="text-muted-foreground lg:text-base text-sm">
                     Install this app on your device for a better experience
                   </p>
                 </header>
@@ -238,8 +240,8 @@ export default function SettingsPage({
             {tab === "performance" && (
               <div>
                 <header>
-                  <h1 className="text-lg">Performance and Data</h1>
-                  <p className="text-muted-foreground">
+                  <h1 className="lg:text-lg text-base">Performance and Data</h1>
+                  <p className="text-muted-foreground lg:text-base text-sm">
                     Control how the app uses data and system resources
                   </p>
                 </header>
@@ -256,7 +258,7 @@ export default function SettingsPage({
                           updateSettings({ ...settings, ads: v === "on" })
                         }
                       >
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="lg:w-40">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -276,7 +278,7 @@ export default function SettingsPage({
                       value={lowDataMode}
                       onValueChange={(v: LowDataMode) => set("lowDataMode", v)}
                     >
-                      <SelectTrigger className="w-40">
+                      <SelectTrigger className="lg:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -295,8 +297,8 @@ export default function SettingsPage({
             {tab === "privacy" && (
               <div>
                 <header>
-                  <h1 className="text-lg">Privacy and Control</h1>
-                  <p className="text-muted-foreground">
+                  <h1 className="lg:text-lg text-base">Privacy and Control</h1>
+                  <p className="text-muted-foreground lg:text-base text-sm">
                     Manage your data, history, and tracking preferences
                   </p>
                 </header>
@@ -316,7 +318,7 @@ export default function SettingsPage({
                           })
                         }
                       >
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="lg:w-40">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -342,7 +344,7 @@ export default function SettingsPage({
                           })
                         }
                       >
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="lg:w-40">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -368,7 +370,7 @@ export default function SettingsPage({
                           })
                         }
                       >
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="lg:w-40">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -384,7 +386,7 @@ export default function SettingsPage({
                     <div className="flex items-center justify-between py-4">
                       <div>
                         <h1 className="text-base">Clear History</h1>
-                        <p className="text-muted-foreground"></p>
+                        <p className="text-muted-foreground lg:text-base text-sm"></p>
                       </div>
                       <Button variant="secondary">
                         Clear All <RefreshCcw />
@@ -414,8 +416,10 @@ function SettingRow({
   return (
     <div className="flex items-center justify-between py-4">
       <div>
-        <h1 className="text-base">{title}</h1>
-        <p className="text-muted-foreground">{description}</p>
+        <h1 className="lg:text-base text-sm">{title}</h1>
+        <p className="text-muted-foreground lg:text-base text-xs">
+          {description}
+        </p>
       </div>
       {children}
     </div>

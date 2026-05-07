@@ -96,14 +96,8 @@ export default function LoginPage() {
             </div>
 
             <button
-              // onClick={() =>
-              //   signIn("google", { callbackUrl: "/login/profiles" })
-              // }
               onClick={() =>
-                window.open(
-                  "/api/auth/signin/google?callbackUrl=/login/profiles",
-                  "_blank",
-                )
+                signIn("google", { callbackUrl: "/login/profiles" })
               }
               className="flex items-center justify-center gap-2.5 w-full py-2.5 px-5 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium text-neutral-800 dark:text-white hover:bg-neutral-50 dark:hover:bg-neutral-800 transition"
             >

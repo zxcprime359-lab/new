@@ -258,7 +258,7 @@ export default function ExploreTmdb({
     }
   }, [inView, hasNextPage, fetchNextPage]);
   return (
-    <div className="lg:space-y-12 space-y-6 lg:py-8 py-18  w-full lg:pl-35 pl-2 lg:pr-8 pr-2  min-h-screen">
+    <div className="lg:space-y-12 space-y-6 lg:py-8 py-4  w-full lg:pl-35 pl-2 lg:pr-8 pr-2  min-h-screen">
       {/* <div>
         <h1 className="text-2xl font-semibold">
           {selectedMedia === "movie" ? "Movies" : "TV Shows"}

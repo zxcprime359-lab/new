@@ -31,7 +31,9 @@ export default function Home({
   isKids: boolean;
   hasActiveProfile: boolean;
 }) {
-  const [media_type, setMedia] = useState<"all" | "movie" | "tv">("all");
+  const [media_type_action, setMediaTypeAction] = useState<"all" | "movie" | "tv">(
+    "all",
+  );
   const { data, isLoading, isError } = useContinueWatching();
   const random =
     data?.active?.[Math.floor(Math.random() * (data?.active.length ?? 0))];
@@ -119,56 +121,17 @@ export default function Home({
   ];
   return (
     <div>
-      <LandingPage fullSize={false} isKids={isKids} />
+      <LandingPage
+        fullSize={false}
+        isKids={isKids}
+        setMediaTypeAction={setMediaTypeAction}
+        media_type_action={media_type_action}
+      />
       <div className="relative bg-background z-10 space-y-10 lg:space-y-3">
-        <div className=" flex justify-center items-center lg:gap-4 gap-2 lg:p-4 p-2 font-medium">
-          <span
-            className={cn(
-              "lg:text-lg md:text-base text-sm  lg:px-4 px-2 py-1.5 rounded-sm cursor-pointer transition duration-200",
-              media_type === "all"
-                ? "bg-foreground/10 text-foreground"
-                : "text-muted-foreground",
-            )}
-            onClick={() => setMedia("all")}
-          >
-            Featured
-          </span>
-          <span
-            className={cn(
-              "lg:text-lg md:text-base text-sm  lg:px-4 px-2 py-1.5 rounded-sm cursor-pointer transition duration-200",
-              media_type === "movie"
-                ? "bg-foreground/10 text-foreground"
-                : "text-muted-foreground",
-            )}
-            onClick={() => setMedia("movie")}
-          >
-            Movies
-          </span>
-          <span
-            className={cn(
-              "lg:text-lg md:text-base text-sm  lg:px-4 px-2 py-1.5 rounded-sm cursor-pointer transition duration-200",
-              media_type === "tv"
-                ? "bg-foreground/10 text-foreground"
-                : "text-muted-foreground",
-            )}
-            onClick={() => setMedia("tv")}
-          >
-            TV Shows
-          </span>
-          <span
-            className={cn(
-              "lg:text-lg md:text-base text-sm text-muted-foreground lg:px-4 px-2 py-1.5 rounded-sm cursor-not-allowed",
-              // media_type === "anime" ? "bg-white/10" : "",
-            )}
-            // onClick={() => setMedia("anime")}
-          >
-            Anime
-          </span>
-        </div>
         <div className="lg:pl-35 pl-2 space-y-15 pb-10">
           {/* TOP 10 */}
 
-          {media_type === "all" && (
+          {media_type_action === "all" && (
             <>
               <Trending time_window="day" media_type="all" isKids={isKids} />
               {hasActiveProfile && (
@@ -186,7 +149,7 @@ export default function Home({
             </>
           )}
 
-          {media_type === "movie" &&
+          {media_type_action === "movie" &&
             movie_endpoints.map((tv) => (
               <ReusableSwiper
                 key={tv.id}
@@ -198,7 +161,7 @@ export default function Home({
                 isKids={isKids}
               />
             ))}
-          {media_type === "tv" &&
+          {media_type_action === "tv" &&
             tv_endpoints.map((tv) => (
               <ReusableSwiper
                 key={tv.id}

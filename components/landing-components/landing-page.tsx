@@ -18,15 +18,22 @@ import { IMAGE_BASE_URL } from "@/constants/tmdb";
 import { MovieTypes } from "@/types/movie-by-id";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { Play } from "lucide-react";
+import { Play, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WatchlistButton from "../ui/button-watchlist";
+
+import Selector from "./selector";
+import { Badge } from "../ui/badge";
 export default function LandingPage({
   fullSize,
   isKids,
+  setMediaTypeAction,
+  media_type_action,
 }: {
   fullSize: boolean;
   isKids: boolean;
+  setMediaTypeAction: (media_type: "all" | "movie" | "tv") => void;
+  media_type_action: "all" | "movie" | "tv";
 }) {
   const [activeData, setActiveData] = useState<MovieTypes | null>(null);
   const logo = activeData?.images?.logos.find(
@@ -56,6 +63,13 @@ export default function LandingPage({
   }, []);
 
   const normal_list = [
+    {
+      id: "1242898",
+      media_type: "movie",
+      custom_image: "",
+      custom_logo: "",
+      poster_path: "/hiD9PSPrZhWDB9ubTuVdq7uLx5s.jpg",
+    },
     {
       id: "285838",
       media_type: "tv",
@@ -141,12 +155,16 @@ export default function LandingPage({
       <div
         className={cn(
           "relative  z-10    lg:pl-35  transition-all duration-300 h-screen flex justify-center items-center lg:pointer-events-none overflow-hidden",
-          fullSize ? "lg:max-h-screen" : "lg:max-h-170 max-h-130",
+          fullSize ? "lg:max-h-screen" : "lg:max-h-190 max-h-120",
         )}
       >
+        <Selector
+          setMediaTypeAction={setMediaTypeAction}
+          media_type_action={media_type_action}
+        />
         <div className=" absolute inset-0 bg-linear-to-b  lg:from-transparent from-background/80 via-transparent to-background " />
         {activeData && (
-          <div className="hidden lg:left-35 md:left-2 lg:block md:block absolute bottom-15 lg:max-w-[45%] md:max-w-[50%]">
+          <div className="hidden lg:left-35 md:left-2 lg:block md:block absolute bottom-25 lg:max-w-[45%] md:max-w-[50%]">
             <div className="lg:mb-8 mb-3 lg:max-w-sm max-w-58   overflow-hidden">
               {activeData?.images.logos.length === 0 ? (
                 <h1 className="lg:text-6xl text-4xl  font-bold">
@@ -219,35 +237,60 @@ export default function LandingPage({
             effect={"cards"}
             slidesPerView="auto"
             centeredSlides={true}
-            spaceBetween={20}
+            spaceBetween={15}
+            className="mt-6"
           >
             {list.map((movie) => (
-              <SwiperSlide key={movie.id} className="w-auto!">
+              <SwiperSlide key={movie.id} className="w-auto! drop-shadow-md">
                 {({ isActive }) => (
-                  <div className="aspect-9/13 w-40 relative flex flex-col gap-6">
-                    <img
-                      className={cn(
-                        " h-full w-full object-cover object-center rounded-sm transition-all duration-300",
-                        isActive
-                          ? "scale-100 brightness-100"
-                          : "scale-85 brightness-50",
-                      )}
-                      src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-                      alt=""
-                    />
-                    {isActive && (
-                      <Button
-                        className={cn(
-                          "transition duration-300",
-                          isActive ? "scale-100" : "scale-85 ",
-                        )}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Play className="fill-current" />
-                        Play Now
-                      </Button>
+                  <div
+                    className={cn(
+                      " w-45  transition-all duration-300",
+                      isActive
+                        ? "scale-100 brightness-100"
+                        : "scale-80 brightness-50",
                     )}
+                  >
+                    <div className="aspect-9/13 relative flex flex-col gap-6">
+                      <img
+                        className={cn(
+                          " h-full w-full object-cover object-center rounded-sm ",
+                        )}
+                        src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+                        alt=""
+                      />
+                    </div>
+
+                    <div
+                      className={cn(
+                        "flex justify-between transition-all duration-200 delay-300 mt-4",
+                        isActive ? "opacity-100" : "opacity-0",
+                      )}
+                    >
+                      <Badge variant="outline" className="rounded-sm">
+                        Movie
+                      </Badge>
+                      <Badge variant="outline" className="rounded-sm">
+                        2026
+                      </Badge>
+                      <Badge variant="outline" className="rounded-sm">
+                        PG
+                      </Badge>
+                    </div>
+                    <Button
+                      variant="outline"
+                      asChild
+                      className={cn(
+                        "w-full h-7.5 transition-all duration-200 delay-300 rounded-sm text-sm mt-2",
+                        isActive ? "opacity-100" : "opacity-0",
+                      )}
+                    >
+                      <Link href={`/details/${media_type}/${activeData?.id}`}>
+                        {" "}
+                        <PlayIcon />
+                        Watch Now
+                      </Link>
+                    </Button>
                   </div>
                 )}
               </SwiperSlide>

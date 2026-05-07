@@ -8,7 +8,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "./navigation";
 import NextAuthProvider from "./provider-next-auth";
 import { Toaster } from "sonner";
-import SearchModal from "./search-modal";
 import Script from "next/script";
 const oxaniumHeading = Oxanium({
   subsets: ["latin"],
@@ -94,7 +93,7 @@ export default function RootLayout({
               <TooltipProvider>
                 <div className="">
                   <Navigation />
-                  <SearchModal />
+
                   {/* <div className="absolute top-0 inset-x-0 z-20 flex justify-end items-center p-8 gap-3">
                   <div className="w-sm">
                     <Input placeholder="Search your favorite ..." />

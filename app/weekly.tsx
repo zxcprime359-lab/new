@@ -23,7 +23,7 @@ export default function Weekly() {
         Weekly Favorites
       </h1>
 
-      <div className="grid lg:grid-cols-8 md:grid-cols-5 grid-cols-2 gap-1">
+      <div className="grid lg:grid-cols-8 md:grid-cols-5 grid-cols-3 lg:gap-1">
         {isLoading ? (
           Array.from({ length: 10 }).map((_, idx) => <div key={idx}>1</div>)
         ) : trending.length === 0 ? (

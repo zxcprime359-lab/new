@@ -55,7 +55,7 @@ export default function SearchModal() {
 
   return (
     !isLogin && (
-      <div className="fixed lg:top-8 top-0 lg:right-8 lg:inset-x-[unset] inset-x-0 z-30 p-2 lg:p-0">
+      <div className="lg:fixed  lg:top-8 top-0 lg:right-8 lg:inset-x-[unset] inset-x-0 z-30 p-2 lg:p-0">
         <div className="relative flex items-center bg-background/30 rounded-md backdrop-blur-md">
           <span className="absolute left-2 flex items-center border-r pl-1 pr-2">
             <Search className="size-4 opacity-50" />
@@ -126,10 +126,10 @@ export default function SearchModal() {
             <motion.div
               key="search-popup"
               initial={{ maxHeight: 0 }}
-              animate={{ maxHeight: "80vh" }}
+              animate={{ maxHeight: "70vh" }}
               exit={{ maxHeight: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="absolute bg-background/80 backdrop-blur-md w-full lg:mt-0.5 z-10 overflow-auto p-2 custom-scrollbar rounded-sm top-full  space-y-3"
+              className="absolute bg-background/80 backdrop-blur-md w-full lg:mt-0.5 z-10 overflow-auto p-2 custom-scrollbar rounded-sm lg:top-full bottom-full lg:bottom-[unset]  space-y-3"
             >
               <div className="flex flex-col gap-3">
                 {isLoading ? (

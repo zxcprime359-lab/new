@@ -123,7 +123,7 @@ export default function Navigation() {
                     </Link>
                   </TooltipTrigger>
 
-                  <TooltipContent side="right">
+                  <TooltipContent side="right" className="hidden lg:block">
                     <p>{label}</p>
                   </TooltipContent>
                 </Tooltip>

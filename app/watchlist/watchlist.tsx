@@ -30,8 +30,8 @@ export default function Watchlist() {
   const filteredCompleted = filterByTab(data);
 
   return (
-    <div className=" lg:pl-35 pl-2 lg:pr-8 pr-2 mt-20 ">
-      <div className=" min-h-screen mt-8 ">
+    <div className=" lg:pl-35 pl-2 lg:pr-8 pr-2 ">
+      <div className=" min-h-screen lg:mt-8 mt-4 ">
         <TitleReusable
           title="Watchlist"
           Icon={Bookmark}
@@ -51,14 +51,14 @@ export default function Watchlist() {
             <div className="col-span-7 h-100 flex items-center justify-center text-center">
               <div className="flex flex-col items-center gap-2 text-muted-foreground">
                 <div className="p-2 animate-bounce">
-                  <IconGhost2Filled className="size-8" />
+                  <IconGhost2Filled className="lg:size-8 size-7" />
                 </div>
 
-                <h1 className="text-2xl font-semibold text-foreground">
+                <h1 className="lg:text-2xl text-lg font-semibold text-foreground">
                   Nothing to show here yet
                 </h1>
 
-                <p className="text-sm">
+                <p className="text-sm ">
                   Start watching movies or shows and we’ll track your history
                 </p>
               </div>

@@ -86,7 +86,7 @@ export default function Navigation() {
     !isLogin && (
       <div className="fixed lg:inset-y-0 inset-x-0 lg:inset-x-[unset] bottom-0  left-0 z-30">
         <SearchModal />
-        <div className=" h-full  flex lg:flex-col justify-between items-center lg:px-10 px-6 lg:py-8 py-4 bg-background/80 backdrop-blur-lg lg:backdrop-blur-none   ">
+        <div className=" h-full  flex lg:flex-col justify-between items-center lg:px-10 px-6 lg:py-8 py-4 bg-background/80 lg:bg-transparent backdrop-blur-lg lg:backdrop-blur-none   ">
           <div className="size-9 hidden lg:block">
             <img
               className="h-full w-full object-contain"

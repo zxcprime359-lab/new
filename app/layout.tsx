@@ -93,23 +93,9 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <TooltipProvider>
-                <div className="">
-                  <Navigation />
+                <Navigation />
+                {children}
 
-                  {/* <div className="absolute top-0 inset-x-0 z-20 flex justify-end items-center p-8 gap-3">
-                  <div className="w-sm">
-                    <Input placeholder="Search your favorite ..." />
-                  </div>
-                  <div className="size-8.5 ">
-                    <img
-                      className="h-full w-full object-contain rounded-sm"
-                      src={logo.src}
-                      alt=""
-                    />
-                  </div>
-                </div> */}
-                  {children}
-                </div>
                 {modal}
                 {player}
                 {login}

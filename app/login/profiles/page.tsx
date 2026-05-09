@@ -125,9 +125,50 @@ export default function WhoIsWatching() {
     setView("managing");
   };
 
+  // const handleVerifyPin = async () => {
+  //   if (!selected) return;
+
+  //   try {
+  //     const res = await verifyPin({
+  //       profileId: selected.id,
+  //       pin: pinState.value,
+  //     });
+
+  //     if (res.success) {
+  //       // 🔥 THIS IS THE NEXT STEP
+  //       await update({
+  //         activeProfileId: selected.id,
+  //         avatarType: selected.avatar_type,
+  //         profileName: selected.name,
+  //         isKids: selected.is_kids,
+  //       });
+
+  //       router.push("/");
+  //     }
+  //   } catch (err: any) {
+  //     setPinState((prev) => ({
+  //       ...prev,
+  //       error: true,
+  //     }));
+  //   }
+  // };
+
   const handleVerifyPin = async () => {
     if (!selected) return;
 
+    // No PIN set — go straight in
+    if (!selected.has_pin) {
+      await update({
+        activeProfileId: selected.id,
+        avatarType: selected.avatar_type,
+        profileName: selected.name,
+        isKids: selected.is_kids,
+      });
+      router.push("/");
+      return;
+    }
+
+    // Has PIN — verify it
     try {
       const res = await verifyPin({
         profileId: selected.id,
@@ -135,21 +176,16 @@ export default function WhoIsWatching() {
       });
 
       if (res.success) {
-        // 🔥 THIS IS THE NEXT STEP
         await update({
           activeProfileId: selected.id,
           avatarType: selected.avatar_type,
           profileName: selected.name,
           isKids: selected.is_kids,
         });
-
         router.push("/");
       }
     } catch (err: any) {
-      setPinState((prev) => ({
-        ...prev,
-        error: true,
-      }));
+      setPinState((prev) => ({ ...prev, error: true }));
     }
   };
   const sharedBtnOutline =

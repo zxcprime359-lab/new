@@ -11,7 +11,7 @@ import {
   useRemoveFromContinueWatching,
   useFinishWatching,
 } from "@/hook/account/progress-save";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function WatchPage({
@@ -20,6 +20,8 @@ export default function WatchPage({
   hasActiveProfile: boolean;
 }) {
   const [open, setOpen] = useState(true);
+  const searchParams = useSearchParams();
+  const progress = Number(searchParams.get("progress") || 0);
   const { params } = useParams();
   const media_type = String(params?.[0]);
   const id = String(params?.[1]);
@@ -118,7 +120,11 @@ export default function WatchPage({
         <iframe
           height="100%"
           width="100%"
-          src={`https://zxcstream.xyz/player/${media_type}/${id}${media_type === "tv" ? `/${season}/${episode}` : ""}?back=true&domainAd=zxcprime.icu&load_progress=false&save_progress=false`}
+          src={`https://zxcstream.xyz/player/${media_type}/${id}${
+            media_type === "tv" ? `/${season}/${episode}` : ""
+          }?back=true&domainAd=zxcprime.icu&load_progress=false&save_progress=false${
+            progress > 0 ? `&load=${progress}` : ""
+          }`}
           allowFullScreen
           loading="lazy"
         />

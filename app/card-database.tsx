@@ -35,7 +35,10 @@ export default function DatabaseCard({
   const { isVisible } = useSwiperSlide();
   const [loaded, setLoaded] = useState(false);
   const searchParams = useSearchParams();
-  const paramsObject = Object.fromEntries(searchParams.entries());
+  const paramsObject = {
+    ...Object.fromEntries(searchParams.entries()),
+    progress: data.progress_seconds,
+  };
   const { mutate: removeProgress, isPending: isDeleting } =
     useRemoveFromContinueWatching();
 

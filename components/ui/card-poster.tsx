@@ -73,7 +73,7 @@ export default function MovieCard({
               </div>
             )}
 
-            <span className="absolute top-1 right-1 z-10 lg:p-1.5 p-0.5 bg-background/50 backdrop-blur-md lg:text-sm text-xs font-medium">
+            <span className="absolute top-1 right-1 z-10 lg:p-1.5 p-0.5 bg-background/50 backdrop-blur-md lg:text-sm text-xs font-medium rounded-sm">
               {year}
             </span>
           </div>

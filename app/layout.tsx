@@ -43,12 +43,14 @@ export default function RootLayout({
   player,
   login,
   settings,
+  search,
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
   player: React.ReactNode;
   login: React.ReactNode;
   settings: React.ReactNode;
+  search: React.ReactNode;
 }>) {
   return (
     <html
@@ -112,6 +114,7 @@ export default function RootLayout({
                 {player}
                 {login}
                 {settings}
+                {search}
                 <Toaster />
               </TooltipProvider>
             </ThemeProvider>

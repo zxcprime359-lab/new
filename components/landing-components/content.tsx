@@ -34,7 +34,7 @@ export default function LandingContent({
       src={`${IMAGE_BASE_URL}/original${data?.backdrop_path}`}
       alt={data?.title || data?.name}
       className={cn(
-        "object-cover w-full h-full transition duration-200 blur-xs lg:blur-none",
+        "object-cover w-full h-full transition duration-200 ",
         loaded ? "opacity-100" : "opacity-0",
       )}
       onLoad={() => setLoaded(true)}

@@ -31,9 +31,9 @@ export default function Home({
   isKids: boolean;
   hasActiveProfile: boolean;
 }) {
-  const [media_type_action, setMediaTypeAction] = useState<"all" | "movie" | "tv">(
-    "all",
-  );
+  const [media_type_action, setMediaTypeAction] = useState<
+    "all" | "movie" | "tv"
+  >("all");
   const { data, isLoading, isError } = useContinueWatching();
   const random =
     data?.active?.[Math.floor(Math.random() * (data?.active.length ?? 0))];

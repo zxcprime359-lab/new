@@ -258,20 +258,20 @@ export default function ExploreTmdb({
     }
   }, [inView, hasNextPage, fetchNextPage]);
   return (
-    <div className="lg:space-y-12 space-y-6 lg:py-8 py-4  w-full lg:pl-35 pl-2 lg:pr-8 pr-2  min-h-screen">
+    <div className="space-y-8 lg:py-8 py-4  w-full lg:pl-35 pl-2 lg:pr-8 pr-2  min-h-screen">
       {/* <div>
         <h1 className="text-2xl font-semibold">
           {selectedMedia === "movie" ? "Movies" : "TV Shows"}
         </h1>
         <p className="text-muted-foreground">Discover your next favorite.</p>
       </div> */}
-      <TitleReusable
+      {/* <TitleReusable
         title={media_type === "movie" ? "Movies" : "TV Shows"}
         Icon={media_type === "movie" ? MovieIcon : TvIcon}
         description=""
-      />
+      /> */}
 
-      <div className="space-y-6">
+      <div className="space-y-12">
         <div className="flex flex-wrap gap-1.5 ">
           {(media_type === "tv" ? tvGenres : movieGenres)
             .slice(
@@ -285,7 +285,7 @@ export default function ExploreTmdb({
             .map((genre) => (
               <span
                 key={genre.id}
-                className={`flex-1 flex items-center gap-3 lg:py-3 py-2 lg:px-6 px-4  bg-card cursor-pointer  rounded-sm ${selectedGenres.has(genre.id) ? "text-foreground" : " text-muted-foreground"}`}
+                className={`flex-1 flex items-center gap-3 lg:py-3 py-2 lg:px-6 px-4  bg-card cursor-pointer  rounded-sm ${selectedGenres.has(genre.id) ? "text-red-500" : " text-muted-foreground"}`}
                 onClick={() => toggleGenre(genre.id)}
               >
                 <genre.icon className="lg:block hidden lg:size-5 size-4.5" />

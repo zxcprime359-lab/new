@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRightLeft, LogIn, LogOut } from "lucide-react";
+import { ArrowRightLeft, LogIn, LogOut, Search } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -30,7 +30,13 @@ import { BookmarkIcon } from "@/components/icon/bookmark";
 import SearchModal from "./search-modal";
 const navItems = [
   { icon: HomeIcon, activeIcon: HomeIcon, label: "Home", url: "/" },
-  // { icon: Search, label: "Search", url: "/search", lucide: true },
+  {
+    icon: Search,
+    activeIcon: Search,
+    label: "Search",
+    url: "/search",
+    lucide: true,
+  },
   {
     icon: MovieIcon,
     activeIcon: MovieIcon,
@@ -84,7 +90,7 @@ export default function Navigation() {
 
   return (
     !isLogin && (
-      <div className="fixed lg:inset-y-0 inset-x-0 lg:inset-x-[unset] bottom-0  left-0 z-30">
+      <div className="fixed lg:inset-y-0 inset-x-0 lg:inset-x-[unset] bottom-0  left-0 z-40">
         <SearchModal />
         <div className=" h-full  flex lg:flex-col justify-between items-center lg:px-10 px-6 lg:py-8 py-4 bg-background/80 lg:bg-transparent backdrop-blur-lg lg:backdrop-blur-none   ">
           <div className="size-9 hidden lg:block">
@@ -99,7 +105,7 @@ export default function Navigation() {
               ({ icon: Icon, activeIcon: ActiveIcon, label, url }) => (
                 <Tooltip key={label}>
                   <TooltipTrigger asChild>
-                    <Link href={url} className="space-y-1.5">
+                    <Link scroll={false} href={url} className="space-y-1.5">
                       <button
                         className={cn(
                           "block hover:text-foreground transition-colors duration-200 cursor-pointer",

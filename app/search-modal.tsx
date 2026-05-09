@@ -55,7 +55,7 @@ export default function SearchModal() {
 
   return (
     !isLogin && (
-      <div className="lg:fixed  lg:top-8 top-0 lg:right-8 lg:inset-x-[unset] inset-x-0 z-30 p-2 lg:p-0">
+      <div className="lg:fixed hidden  lg:top-8 top-0 lg:right-8 lg:inset-x-[unset] inset-x-0 z-30 p-2 lg:p-0">
         <div className="relative flex items-center bg-background/30 rounded-md backdrop-blur-md">
           <span className="absolute left-2 flex items-center border-r pl-1 pr-2">
             <Search className="size-4 opacity-50" />

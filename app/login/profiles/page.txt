@@ -9,6 +9,7 @@ import { Profile, useProfiles } from "@/hook/account/get-profiles";
 import { useRouter } from "next/navigation";
 import { useVerifyPin } from "@/hook/account/post-verify";
 import { useSession } from "next-auth/react";
+import logo from "@/assets/brand.svg";
 import { signOut } from "next-auth/react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/input-otp";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -27,14 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-
-type View =
-  | "select"
-  | "selected"
-  | "edit"
-  | "managing"
-  | "adding"
-  | "changingPin";
+type View = "select" | "selected" | "edit" | "managing" | "adding";
 
 const AVATAR_MAP: Record<string, React.ReactNode> = {
   svg1: <Profile1 />,
@@ -43,51 +38,44 @@ const AVATAR_MAP: Record<string, React.ReactNode> = {
   svg4: <Profile4 />,
 };
 
-const EMPTY_FORM = {
-  name: "",
-  avatar_type: "svg1",
-  is_kids: false,
-  pin: "",
-};
-
 export default function WhoIsWatching() {
   const { update } = useSession();
   const router = useRouter();
-  const {
-    profiles,
-    createProfile,
-    isCreating,
-    deleteProfile,
-    updateProfile,
-    isUpdating,
-  } = useProfiles();
-  const {
-    mutateAsync: verifyPin,
-    isPending: isVerifying,
-    isError: pinError,
-    reset: resetPin,
-  } = useVerifyPin();
-
+  const { profiles, createProfile, isCreating, deleteProfile, updateProfile } =
+    useProfiles();
+  const { mutateAsync: verifyPin, isPending: isVerifying } = useVerifyPin();
   const [view, setView] = useState<View>("select");
   const [selected, setSelected] = useState<Profile | null>(null);
   const [editing, setEditing] = useState<Profile | null>(null);
-  const [pinValue, setPinValue] = useState("");
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [editForm, setEditForm] = useState(EMPTY_FORM);
-  const [pinForm, setPinForm] = useState({
-    current: "",
-    next: "",
-    currentError: false,
+  const [pinState, setPinState] = useState({
+    value: "",
+    error: false,
   });
+  const [form, setForm] = useState({
+    name: "",
+    avatar_type: "svg1",
+    is_kids: false,
+    pin: "",
+  });
+
+  const [editForm, setEditForm] = useState({
+    name: "",
+    avatar_type: "svg1",
+    is_kids: false,
+    pin: "",
+  });
+
   const handleProfileClick = (profile: Profile) => {
     if (view === "managing") {
       setEditing(profile);
+
       setEditForm({
         name: profile.name,
         avatar_type: profile.avatar_type,
         is_kids: profile.is_kids,
         pin: "",
       });
+
       setView("edit");
     } else {
       setSelected(profile);
@@ -97,81 +85,108 @@ export default function WhoIsWatching() {
 
   const handleAddProfile = async () => {
     if (!form.name.trim()) return;
+
     await createProfile({
       name: form.name.trim(),
       avatar_type: form.avatar_type,
       is_kids: form.is_kids,
       pin: form.pin || null,
     });
-    setForm(EMPTY_FORM);
+
+    setForm({
+      name: "",
+      avatar_type: "svg1",
+      is_kids: false,
+      pin: "",
+    });
     setView("select");
   };
 
   const handleDelete = async () => {
     if (!editing?.id) return;
+
     await deleteProfile(editing.id);
+
     setEditing(null);
     setView("managing");
   };
-
   const handleSaveEdit = async () => {
     if (!editing) return;
+
     await updateProfile({
       id: editing.id,
       name: editForm.name,
       avatar_type: editForm.avatar_type,
       is_kids: editForm.is_kids,
-      ...(editForm.pin ? { pin: editForm.pin } : {}),
+      pin: editForm.pin || null,
     });
+
     setEditing(null);
     setView("managing");
   };
 
+  // const handleVerifyPin = async () => {
+  //   if (!selected) return;
+
+  //   try {
+  //     const res = await verifyPin({
+  //       profileId: selected.id,
+  //       pin: pinState.value,
+  //     });
+
+  //     if (res.success) {
+  //       // 🔥 THIS IS THE NEXT STEP
+  //       await update({
+  //         activeProfileId: selected.id,
+  //         avatarType: selected.avatar_type,
+  //         profileName: selected.name,
+  //         isKids: selected.is_kids,
+  //       });
+
+  //       router.push("/");
+  //     }
+  //   } catch (err: any) {
+  //     setPinState((prev) => ({
+  //       ...prev,
+  //       error: true,
+  //     }));
+  //   }
+  // };
+
   const handleVerifyPin = async () => {
     if (!selected) return;
 
-    const sessionPayload = {
-      activeProfileId: selected.id,
-      avatarType: selected.avatar_type,
-      profileName: selected.name,
-      isKids: selected.is_kids,
-    };
-
+    // No PIN set — go straight in
     if (!selected.has_pin) {
-      await update(sessionPayload);
+      await update({
+        activeProfileId: selected.id,
+        avatarType: selected.avatar_type,
+        profileName: selected.name,
+        isKids: selected.is_kids,
+      });
       router.push("/");
       return;
     }
 
-    const res = await verifyPin({ profileId: selected.id, pin: pinValue });
-    if (res.success) {
-      await update(sessionPayload);
-      router.push("/");
-    }
-  };
-  const handleChangePin = async () => {
-    if (!editing) return;
+    // Has PIN — verify it
+    try {
+      const res = await verifyPin({
+        profileId: selected.id,
+        pin: pinState.value,
+      });
 
-    // if profile has existing pin, verify it first
-    if (editing.has_pin) {
-      try {
-        await verifyPin({ profileId: editing.id, pin: pinForm.current });
-      } catch {
-        setPinForm((prev) => ({ ...prev, currentError: true }));
-        return;
+      if (res.success) {
+        await update({
+          activeProfileId: selected.id,
+          avatarType: selected.avatar_type,
+          profileName: selected.name,
+          isKids: selected.is_kids,
+        });
+        router.push("/");
       }
+    } catch (err: any) {
+      setPinState((prev) => ({ ...prev, error: true }));
     }
-
-    await updateProfile({
-      id: editing.id,
-      name: editing.name,
-      avatar_type: editing.avatar_type,
-      is_kids: editing.is_kids,
-      pin: pinForm.next,
-    });
-
-    setPinForm({ current: "", next: "", currentError: false });
-    setView("edit");
   };
   const sharedBtnOutline =
     "px-6 py-2 text-sm uppercase tracking-widest text-[#6D6D6D] border border-[#6D6D6D] hover:text-white hover:border-white transition-all duration-300";
@@ -198,11 +213,8 @@ export default function WhoIsWatching() {
               <InputOTP
                 maxLength={4}
                 pattern={REGEXP_ONLY_DIGITS}
-                value={pinValue}
-                onChange={(value) => {
-                  setPinValue(value);
-                  resetPin();
-                }}
+                value={pinState.value}
+                onChange={(value) => setPinState({ value, error: false })}
               >
                 <InputOTPGroup>
                   <InputOTPSlot index={0} masked />
@@ -211,27 +223,26 @@ export default function WhoIsWatching() {
                   <InputOTPSlot index={3} masked />
                 </InputOTPGroup>
               </InputOTP>
-              {pinError && (
+
+              {pinState.error && (
                 <p className="text-red-400 text-sm mb-4 tracking-wide text-center">
                   PIN is incorrect!
                 </p>
               )}
             </>
           )}
+
           <button
             onClick={handleVerifyPin}
-            disabled={
-              isVerifying || (selected.has_pin && pinValue.length !== 4)
-            }
             className={sharedBtnOutline}
+            disabled={selected.has_pin && pinState.value.length !== 4}
           >
-            {isVerifying ? "Verifying..." : "Enter"}
+            Enter
           </button>
+
           <button
             onClick={() => {
               setSelected(null);
-              setPinValue("");
-              resetPin();
               setView("select");
             }}
             className={sharedBtnOutline}
@@ -243,88 +254,6 @@ export default function WhoIsWatching() {
     );
   }
 
-  if (view === "changingPin" && editing) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 animate-[fadeIn_400ms_ease_both]">
-        <h1 className="text-white text-4xl font-light tracking-wide">
-          Change PIN
-        </h1>
-
-        {editing.has_pin && (
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-[#6D6D6D] text-sm tracking-wide">Current PIN</p>
-            <InputOTP
-              maxLength={4}
-              pattern={REGEXP_ONLY_DIGITS}
-              value={pinForm.current}
-              onChange={(value) =>
-                setPinForm((prev) => ({
-                  ...prev,
-                  current: value,
-                  currentError: false,
-                }))
-              }
-            >
-              <InputOTPGroup>
-                <InputOTPSlot index={0} masked />
-                <InputOTPSlot index={1} masked />
-                <InputOTPSlot index={2} masked />
-                <InputOTPSlot index={3} masked />
-              </InputOTPGroup>
-            </InputOTP>
-            {pinForm.currentError && (
-              <p className="text-red-400 text-sm tracking-wide text-center">
-                Current PIN is incorrect!
-              </p>
-            )}
-          </div>
-        )}
-
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-[#6D6D6D] text-sm tracking-wide">New PIN</p>
-          <InputOTP
-            maxLength={4}
-            pattern={REGEXP_ONLY_DIGITS}
-            value={pinForm.next}
-            onChange={(value) =>
-              setPinForm((prev) => ({ ...prev, next: value }))
-            }
-          >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} masked />
-              <InputOTPSlot index={1} masked />
-              <InputOTPSlot index={2} masked />
-              <InputOTPSlot index={3} masked />
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={handleChangePin}
-            disabled={
-              isVerifying ||
-              isUpdating ||
-              (editing.has_pin && pinForm.current.length !== 4) ||
-              pinForm.next.length !== 4
-            }
-            className={`${sharedBtnSolid} disabled:opacity-40 disabled:cursor-not-allowed`}
-          >
-            {isVerifying || isUpdating ? "Saving..." : "Save PIN"}
-          </button>
-          <button
-            onClick={() => {
-              setPinForm({ current: "", next: "", currentError: false });
-              setView("edit");
-            }}
-            className={sharedBtnOutline}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    );
-  }
   if (view === "edit" && editing) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_400ms_ease_both]">
@@ -337,7 +266,26 @@ export default function WhoIsWatching() {
             setEditForm((prev) => ({ ...prev, avatar_type: value }))
           }
         />
-
+        <div className="col-span-2 flex flex-col items-center gap-2">
+          <p className="text-[#6D6D6D] text-sm tracking-wide">
+            New PIN (leave blank to keep current)
+          </p>
+          <InputOTP
+            maxLength={4}
+            pattern={REGEXP_ONLY_DIGITS}
+            value={editForm.pin}
+            onChange={(value) =>
+              setEditForm((prev) => ({ ...prev, pin: value }))
+            }
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} masked />
+              <InputOTPSlot index={1} masked />
+              <InputOTPSlot index={2} masked />
+              <InputOTPSlot index={3} masked />
+            </InputOTPGroup>
+          </InputOTP>
+        </div>
         <KidsToggle
           value={editForm.is_kids}
           onChange={(value) =>
@@ -357,14 +305,8 @@ export default function WhoIsWatching() {
           >
             Cancel
           </button>
-          <button
-            onClick={() => {
-              setPinForm({ current: "", next: "", currentError: false });
-              setView("changingPin");
-            }}
-            className={cn("col-span-2", sharedBtnOutline)}
-          >
-            {editing.has_pin ? "Change PIN" : "Set PIN"}
+          <button className={cn("col-span-2", sharedBtnOutline)}>
+            Change 4 digit PIN
           </button>
         </div>
 

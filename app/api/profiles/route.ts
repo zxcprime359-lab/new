@@ -139,15 +139,17 @@ export async function PATCH(req: NextRequest) {
       { status: 400 },
     );
   }
-  const pin_hash = pin ? await bcrypt.hash(pin, 10) : null;
+  const pinFields =
+    pin !== undefined
+      ? { pin_hash: await bcrypt.hash(pin, 10), has_pin: true }
+      : {};
   const { data, error } = await supabase
     .from("watch_profiles")
     .update({
       name: name.trim(),
       avatar_type,
       is_kids,
-      pin_hash, // (still no hashing for now)
-      has_pin: !!pin,
+      ...pinFields,
     })
     .eq("id", id)
     .eq("user_google_id", google_id) // 🔒 security

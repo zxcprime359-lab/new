@@ -81,8 +81,11 @@ export default function Navigation() {
   const pathname = usePathname();
 
   const handleSwitchProfile = async () => {
-    await update({ activeProfileId: null });
-    router.push("/login/profiles");
+    const res = await fetch("/api/profiles/switch", { method: "POST" });
+    if (res.ok) {
+      await update();
+      router.push("/login/profiles");
+    }
   };
   const isLogin = pathname.startsWith("/login/profiles");
   const isLoggedIn = !!session;

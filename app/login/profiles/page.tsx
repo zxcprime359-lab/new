@@ -28,6 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type View =
   | "select"
@@ -56,6 +57,7 @@ export default function WhoIsWatching() {
   const router = useRouter();
   const {
     profiles,
+    isLoading,
     createProfile,
     isCreating,
     deleteProfile,
@@ -559,31 +561,48 @@ export default function WhoIsWatching() {
               {isManaging ? "Manage Profiles" : "Who's watching?"}
             </h1>
             <div className="flex flex-wrap justify-center lg:gap-6 mb-12 max-w-3xl">
-              {profiles.map((profile) => (
-                <div
-                  key={profile.id}
-                  className="flex flex-col items-center cursor-pointer group lg:w-36 w-25"
-                  onClick={() => handleProfileClick(profile)}
-                >
-                  <div className="relative lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden">
-                    {AVATAR_MAP[profile.avatar_type]}
-                    {isManaging && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <Pencil className=" size-7" />
-                      </div>
-                    )}
-                    {profile.is_kids && !isManaging && (
-                      <span className="absolute bottom-0 left-0 right-0 text-center text-xs uppercase tracking-wider bg-red-600  py-0.5">
-                        Kids
-                      </span>
-                    )}
+              {isLoading ? (
+                <>
+                  <div>
+                    <Skeleton className="lg:size-36 size-25" />
+                    <Skeleton className="h-4 w-20 mt-5 mx-auto" />
                   </div>
-                  <span className="mt-4 text-base text-[#6D6D6D] group-hover: transition-colors duration-300 text-center leading-snug">
-                    {profile.name}
-                  </span>
-                </div>
-              ))}
-              {profiles.length < 5 && (
+                  <div>
+                    <Skeleton className="lg:size-36 size-25" />
+                    <Skeleton className="h-4 w-20 mt-5 mx-auto" />
+                  </div>{" "}
+                  <div>
+                    <Skeleton className="lg:size-36 size-25" />
+                    <Skeleton className="h-4 w-20 mt-5 mx-auto" />
+                  </div>
+                </>
+              ) : (
+                profiles.map((profile) => (
+                  <div
+                    key={profile.id}
+                    className="flex flex-col items-center cursor-pointer group lg:w-36 w-25"
+                    onClick={() => handleProfileClick(profile)}
+                  >
+                    <div className="relative lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden">
+                      {AVATAR_MAP[profile.avatar_type]}
+                      {isManaging && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <Pencil className=" size-7" />
+                        </div>
+                      )}
+                      {profile.is_kids && !isManaging && (
+                        <span className="absolute bottom-0 left-0 right-0 text-center text-xs uppercase tracking-wider bg-red-600  py-0.5">
+                          Kids
+                        </span>
+                      )}
+                    </div>
+                    <span className="mt-4 text-base text-[#6D6D6D] group-hover: transition-colors duration-300 text-center leading-snug">
+                      {profile.name}
+                    </span>
+                  </div>
+                ))
+              )}
+              {profiles.length < 5 && !isLoading && (
                 <div
                   className="flex flex-col items-center cursor-pointer group w-36"
                   onClick={() => setView("adding")}

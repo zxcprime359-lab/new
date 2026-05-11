@@ -11,6 +11,7 @@ import { useVerifyPin } from "@/hook/account/post-verify";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { AnimatePresence, motion } from "motion/react";
 import {
   InputOTP,
   InputOTPGroup,
@@ -60,6 +61,7 @@ export default function WhoIsWatching() {
     deleteProfile,
     updateProfile,
     isUpdating,
+    isDeleting,
   } = useProfiles();
   const {
     mutateAsync: verifyPin,
@@ -174,35 +176,109 @@ export default function WhoIsWatching() {
     setView("edit");
   };
   const sharedBtnOutline =
-    "px-6 py-2 text-sm uppercase tracking-widest text-[#6D6D6D] border border-[#6D6D6D] hover:text-white hover:border-white transition-all duration-300";
+    "px-6 py-2 text-sm uppercase tracking-widest text-muted-foreground border border-input hover:text-foreground hover:border-foreground/50 transition-all duration-200";
   const sharedBtnSolid =
-    "px-6 py-2 text-sm uppercase tracking-widest bg-white text-black hover:bg-gray-200 transition-all duration-300";
+    "px-6 py-2 text-sm uppercase tracking-widest bg-white text-black hover:bg-gray-200 transition-all duration-200";
 
-  if (view === "selected" && selected) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_400ms_ease_both]">
-        <div className="relative w-40 h-40 border-4 border-white overflow-hidden">
-          {AVATAR_MAP[selected.avatar_type]}
-        </div>
-        {selected.is_kids && (
-          <span className="mt-3 px-3 py-0.5 text-xs uppercase tracking-widest bg-red-600 text-white rounded-sm">
-            Kids
-          </span>
-        )}
-        <p className="text-white text-3xl font-light mt-3 text-center max-w-xs">
-          {selected.name}
-        </p>
-        <div className="flex flex-col mt-6 space-y-3">
-          {selected.has_pin && (
-            <>
+  const isManaging = view === "managing";
+
+  return (
+    <AnimatePresence mode="wait">
+      {view === "selected" && selected ? (
+        <motion.div
+          key="selected"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="min-h-screen bg-background flex flex-col items-center justify-center "
+        >
+          <div className="relative w-40 h-40 border-4 border-white overflow-hidden">
+            {AVATAR_MAP[selected.avatar_type]}
+          </div>
+          {selected.is_kids && (
+            <span className="mt-3 px-3 py-0.5 text-xs uppercase tracking-widest bg-red-600  rounded-sm">
+              Kids
+            </span>
+          )}
+          <p className=" text-3xl font-light mt-3 text-center max-w-xs">
+            {selected.name}
+          </p>
+          <div className="flex flex-col mt-6 space-y-3">
+            {selected.has_pin && (
+              <>
+                <InputOTP
+                  maxLength={4}
+                  pattern={REGEXP_ONLY_DIGITS}
+                  value={pinValue}
+                  onChange={(value) => {
+                    setPinValue(value);
+                    resetPin();
+                  }}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} masked />
+                    <InputOTPSlot index={1} masked />
+                    <InputOTPSlot index={2} masked />
+                    <InputOTPSlot index={3} masked />
+                  </InputOTPGroup>
+                </InputOTP>
+                {pinError && (
+                  <p className="text-red-400 text-sm mb-4 tracking-wide text-center">
+                    PIN is incorrect!
+                  </p>
+                )}
+              </>
+            )}
+            <button
+              onClick={handleVerifyPin}
+              disabled={
+                isVerifying || (selected.has_pin && pinValue.length !== 4)
+              }
+              className={sharedBtnOutline}
+            >
+              {isVerifying ? "Verifying..." : "Enter"}
+            </button>
+            <button
+              onClick={() => {
+                setSelected(null);
+                setPinValue("");
+                resetPin();
+                setView("select");
+              }}
+              className={sharedBtnOutline}
+            >
+              Back to Profiles
+            </button>
+          </div>
+        </motion.div>
+      ) : view === "changingPin" && editing ? (
+        <motion.div
+          key="changingPin"
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 animate-[fadeIn_400ms_ease_both]"
+        >
+          <h1 className=" text-4xl font-light tracking-wide">Change PIN</h1>
+
+          {editing.has_pin && (
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-[#6D6D6D] text-sm tracking-wide">
+                Current PIN
+              </p>
               <InputOTP
                 maxLength={4}
                 pattern={REGEXP_ONLY_DIGITS}
-                value={pinValue}
-                onChange={(value) => {
-                  setPinValue(value);
-                  resetPin();
-                }}
+                value={pinForm.current}
+                onChange={(value) =>
+                  setPinForm((prev) => ({
+                    ...prev,
+                    current: value,
+                    currentError: false,
+                  }))
+                }
               >
                 <InputOTPGroup>
                   <InputOTPSlot index={0} masked />
@@ -211,58 +287,22 @@ export default function WhoIsWatching() {
                   <InputOTPSlot index={3} masked />
                 </InputOTPGroup>
               </InputOTP>
-              {pinError && (
-                <p className="text-red-400 text-sm mb-4 tracking-wide text-center">
-                  PIN is incorrect!
+              {pinForm.currentError && (
+                <p className="text-red-400 text-sm tracking-wide text-center">
+                  Current PIN is incorrect!
                 </p>
               )}
-            </>
+            </div>
           )}
-          <button
-            onClick={handleVerifyPin}
-            disabled={
-              isVerifying || (selected.has_pin && pinValue.length !== 4)
-            }
-            className={sharedBtnOutline}
-          >
-            {isVerifying ? "Verifying..." : "Enter"}
-          </button>
-          <button
-            onClick={() => {
-              setSelected(null);
-              setPinValue("");
-              resetPin();
-              setView("select");
-            }}
-            className={sharedBtnOutline}
-          >
-            Back to Profiles
-          </button>
-        </div>
-      </div>
-    );
-  }
 
-  if (view === "changingPin" && editing) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 animate-[fadeIn_400ms_ease_both]">
-        <h1 className="text-white text-4xl font-light tracking-wide">
-          Change PIN
-        </h1>
-
-        {editing.has_pin && (
           <div className="flex flex-col items-center gap-2">
-            <p className="text-[#6D6D6D] text-sm tracking-wide">Current PIN</p>
+            <p className="text-[#6D6D6D] text-sm tracking-wide">New PIN</p>
             <InputOTP
               maxLength={4}
               pattern={REGEXP_ONLY_DIGITS}
-              value={pinForm.current}
+              value={pinForm.next}
               onChange={(value) =>
-                setPinForm((prev) => ({
-                  ...prev,
-                  current: value,
-                  currentError: false,
-                }))
+                setPinForm((prev) => ({ ...prev, next: value }))
               }
             >
               <InputOTPGroup>
@@ -272,263 +312,276 @@ export default function WhoIsWatching() {
                 <InputOTPSlot index={3} masked />
               </InputOTPGroup>
             </InputOTP>
-            {pinForm.currentError && (
-              <p className="text-red-400 text-sm tracking-wide text-center">
-                Current PIN is incorrect!
-              </p>
-            )}
           </div>
-        )}
 
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-[#6D6D6D] text-sm tracking-wide">New PIN</p>
-          <InputOTP
-            maxLength={4}
-            pattern={REGEXP_ONLY_DIGITS}
-            value={pinForm.next}
-            onChange={(value) =>
-              setPinForm((prev) => ({ ...prev, next: value }))
-            }
-          >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} masked />
-              <InputOTPSlot index={1} masked />
-              <InputOTPSlot index={2} masked />
-              <InputOTPSlot index={3} masked />
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={handleChangePin}
-            disabled={
-              isVerifying ||
-              isUpdating ||
-              (editing.has_pin && pinForm.current.length !== 4) ||
-              pinForm.next.length !== 4
-            }
-            className={`${sharedBtnSolid} disabled:opacity-40 disabled:cursor-not-allowed`}
-          >
-            {isVerifying || isUpdating ? "Saving..." : "Save PIN"}
-          </button>
-          <button
-            onClick={() => {
-              setPinForm({ current: "", next: "", currentError: false });
-              setView("edit");
-            }}
-            className={sharedBtnOutline}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    );
-  }
-  if (view === "edit" && editing) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_400ms_ease_both]">
-        <h1 className="text-white text-4xl font-light mb-10 tracking-wide">
-          Edit Profile
-        </h1>
-        <AvatarPicker
-          value={editForm.avatar_type}
-          onChange={(value) =>
-            setEditForm((prev) => ({ ...prev, avatar_type: value }))
-          }
-        />
-
-        <KidsToggle
-          value={editForm.is_kids}
-          onChange={(value) =>
-            setEditForm((prev) => ({ ...prev, is_kids: value }))
-          }
-        />
-        <div className="grid grid-cols-2 gap-3">
-          <button onClick={handleSaveEdit} className={sharedBtnSolid}>
-            Save
-          </button>
-          <button
-            onClick={() => {
-              setEditing(null);
-              setView("managing");
-            }}
-            className={sharedBtnOutline}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              setPinForm({ current: "", next: "", currentError: false });
-              setView("changingPin");
-            }}
-            className={cn("col-span-2", sharedBtnOutline)}
-          >
-            {editing.has_pin ? "Change PIN" : "Set PIN"}
-          </button>
-        </div>
-
-        <button
-          onClick={handleDelete}
-          className="mt-6 text-sm uppercase tracking-widest text-[#6D6D6D] hover:text-red-500 transition-colors duration-300"
+          <div className="flex gap-3">
+            <button
+              onClick={handleChangePin}
+              disabled={
+                isVerifying ||
+                isUpdating ||
+                (editing.has_pin && pinForm.current.length !== 4) ||
+                pinForm.next.length !== 4
+              }
+              className={`${sharedBtnSolid} disabled:opacity-40 disabled:cursor-not-allowed`}
+            >
+              {isVerifying || isUpdating ? "Saving..." : "Save PIN"}
+            </button>
+            <button
+              onClick={() => {
+                setPinForm({ current: "", next: "", currentError: false });
+                setView("edit");
+              }}
+              className={sharedBtnOutline}
+            >
+              Cancel
+            </button>
+          </div>
+        </motion.div>
+      ) : view === "edit" && editing ? (
+        <motion.div
+          key="edit"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_400ms_ease_both]"
         >
-          Delete Profile
-        </button>
-      </div>
-    );
-  }
+          <h1 className=" text-4xl font-light mb-10 tracking-wide">
+            Edit Profile
+          </h1>
+          <AvatarPicker
+            value={editForm.avatar_type}
+            onChange={(value) =>
+              setEditForm((prev) => ({ ...prev, avatar_type: value }))
+            }
+          />
 
-  if (view === "adding") {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_400ms_ease_both]">
-        <h1 className="text-white text-4xl font-light mb-10 tracking-wide">
-          Add Profile
-        </h1>
-        <AvatarPicker
-          value={form.avatar_type}
-          onChange={(value) =>
-            setForm((prev) => ({ ...prev, avatar_type: value }))
-          }
-        />
-        <KidsToggle
-          value={form.is_kids}
-          onChange={(value) => setForm((prev) => ({ ...prev, is_kids: value }))}
-        />
-        <input
-          className="bg-card text-white text-center h-10 w-64 px-3 mb-6 border border-[#555] focus:outline-none focus:border-white"
-          placeholder="Name"
-          value={form.name}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, name: e.target.value }))
-          }
-          autoFocus
-        />
-        <div className="mb-6 flex flex-col items-center gap-2">
-          <p className="text-[#6D6D6D] text-sm tracking-wide">
-            4-digit PIN (optional)
-          </p>
-          <InputOTP
-            maxLength={4}
-            pattern={REGEXP_ONLY_DIGITS}
-            value={form.pin}
-            onChange={(value) => setForm((prev) => ({ ...prev, pin: value }))}
-          >
-            <InputOTPGroup>
-              <InputOTPSlot index={0} masked />
-              <InputOTPSlot index={1} masked />
-              <InputOTPSlot index={2} masked />
-              <InputOTPSlot index={3} masked />
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
+          <KidsToggle
+            value={editForm.is_kids}
+            onChange={(value) =>
+              setEditForm((prev) => ({ ...prev, is_kids: value }))
+            }
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={handleSaveEdit} className={sharedBtnSolid}>
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setEditing(null);
+                setView("managing");
+              }}
+              className={sharedBtnOutline}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                setPinForm({ current: "", next: "", currentError: false });
+                setView("changingPin");
+              }}
+              className={cn("col-span-2", sharedBtnOutline)}
+            >
+              {editing.has_pin ? "Change PIN" : "Set PIN"}
+            </button>
+          </div>
 
-        <div className="flex gap-3">
-          <button
-            onClick={handleAddProfile}
-            disabled={!form.name.trim() || isCreating}
-            className={`${sharedBtnSolid} disabled:opacity-40 disabled:cursor-not-allowed`}
-          >
-            Continue
-          </button>
-          <button
-            onClick={() => {
-              setForm({
-                name: "",
-                avatar_type: "svg1",
-                is_kids: false,
-                pin: "",
-              });
-
-              setView("select");
-            }}
-            className={sharedBtnOutline}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const isManaging = view === "managing";
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_500ms_ease_200ms_both]">
-      <div className="absolute top-0 px-8 py-6 flex justify-between items-center inset-x-0">
-        <div className="size-10">
-          {/* <img className="h-full w-full object-contain" src={logo.src} alt="" /> */}
-        </div>
-        <span>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <LogOut className="size-6" />
+              <button className="mt-6 text-sm uppercase tracking-widest text-[#6D6D6D] hover:text-red-500 transition-colors duration-300">
+                Delete Profile
+              </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Log out of your account?</AlertDialogTitle>
+                <AlertDialogTitle>Delete this profile?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  You’ll be signed out of your account and will need to log in
-                  again to access your data.
+                  This profile and its viewing history, preferences, and saved
+                  data will be permanently removed.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <Button onClick={() => signOut({ callbackUrl: "/" })}>
-                  Log out <LogOut />
+                <AlertDialogCancel disabled={isDeleting}>
+                  Cancel
+                </AlertDialogCancel>
+                <Button disabled={isDeleting} onClick={handleDelete}>
+                  {isDeleting ? " Deleting..." : " Delete Profile"}
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </span>
-      </div>
-      <h1 className="text-white lg:text-5xl text-2xl font-light mb-12 tracking-wide">
-        {isManaging ? "Manage Profiles" : "Who's watching?"}
-      </h1>
-      <div className="flex flex-wrap justify-center lg:gap-6 mb-12 max-w-3xl">
-        {profiles.map((profile) => (
-          <div
-            key={profile.id}
-            className="flex flex-col items-center cursor-pointer group lg:w-36 w-25"
-            onClick={() => handleProfileClick(profile)}
-          >
-            <div className="relative lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden">
-              {AVATAR_MAP[profile.avatar_type]}
-              {isManaging && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <Pencil className="text-white size-7" />
+        </motion.div>
+      ) : view === "adding" ? (
+        <motion.div
+          key="adding"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="min-h-screen bg-background flex  items-center justify-center animate-[fadeIn_400ms_ease_both]"
+        >
+          <div className="flex flex-col items-center">
+            <h1 className=" text-4xl font-light mb-10 tracking-wide">
+              Add Profile
+            </h1>
+            <AvatarPicker
+              value={form.avatar_type}
+              onChange={(value) =>
+                setForm((prev) => ({ ...prev, avatar_type: value }))
+              }
+              random={true}
+            />
+            <KidsToggle
+              value={form.is_kids}
+              onChange={(value) =>
+                setForm((prev) => ({ ...prev, is_kids: value }))
+              }
+            />
+            <input
+              className="bg-card  text-center h-10 w-full  px-3 mb-6 border border-[#555] focus:outline-none focus:border-white"
+              placeholder="Name"
+              value={form.name}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, name: e.target.value }))
+              }
+              autoFocus
+            />
+            <div className="mb-6 flex flex-col items-center gap-2">
+              <p className="text-[#6D6D6D] text-sm tracking-wide">
+                4-digit PIN (optional)
+              </p>
+              <InputOTP
+                maxLength={4}
+                pattern={REGEXP_ONLY_DIGITS}
+                value={form.pin}
+                onChange={(value) =>
+                  setForm((prev) => ({ ...prev, pin: value }))
+                }
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} masked />
+                  <InputOTPSlot index={1} masked />
+                  <InputOTPSlot index={2} masked />
+                  <InputOTPSlot index={3} masked />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleAddProfile}
+                disabled={!form.name.trim() || isCreating}
+                className={`${sharedBtnSolid} disabled:opacity-40 disabled:cursor-not-allowed`}
+              >
+                Continue
+              </button>
+              <button
+                onClick={() => {
+                  setForm({
+                    name: "",
+                    avatar_type: "svg1",
+                    is_kids: false,
+                    pin: "",
+                  });
+
+                  setView("select");
+                }}
+                className={sharedBtnOutline}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="select"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="min-h-screen bg-background flex flex-col items-center justify-center animate-[fadeIn_500ms_ease_200ms_both]"
+        >
+          <div className="absolute top-0 px-8 py-6 flex justify-between items-center inset-x-0">
+            <div className="size-10">
+              {/* <img className="h-full w-full object-contain" src={logo.src} alt="" /> */}
+            </div>
+            <span>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <LogOut className="size-6" />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Log out of your account?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You’ll be signed out of your account and will need to log
+                      in again to access your data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <Button onClick={() => signOut({ callbackUrl: "/" })}>
+                      Log out <LogOut />
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </span>
+          </div>
+          <h1 className=" lg:text-5xl text-2xl font-light mb-12 tracking-wide">
+            {isManaging ? "Manage Profiles" : "Who's watching?"}
+          </h1>
+          <div className="flex flex-wrap justify-center lg:gap-6 mb-12 max-w-3xl">
+            {profiles.map((profile) => (
+              <div
+                key={profile.id}
+                className="flex flex-col items-center cursor-pointer group lg:w-36 w-25"
+                onClick={() => handleProfileClick(profile)}
+              >
+                <div className="relative lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden">
+                  {AVATAR_MAP[profile.avatar_type]}
+                  {isManaging && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <Pencil className=" size-7" />
+                    </div>
+                  )}
+                  {profile.is_kids && !isManaging && (
+                    <span className="absolute bottom-0 left-0 right-0 text-center text-xs uppercase tracking-wider bg-red-600  py-0.5">
+                      Kids
+                    </span>
+                  )}
                 </div>
-              )}
-              {profile.is_kids && !isManaging && (
-                <span className="absolute bottom-0 left-0 right-0 text-center text-xs uppercase tracking-wider bg-red-600 text-white py-0.5">
-                  Kids
+                <span className="mt-4 text-base text-[#6D6D6D] group-hover: transition-colors duration-300 text-center leading-snug">
+                  {profile.name}
                 </span>
-              )}
-            </div>
-            <span className="mt-4 text-base text-[#6D6D6D] group-hover:text-white transition-colors duration-300 text-center leading-snug">
-              {profile.name}
-            </span>
+              </div>
+            ))}
+            {profiles.length < 5 && (
+              <div
+                className="flex flex-col items-center cursor-pointer group w-36"
+                onClick={() => setView("adding")}
+              >
+                <div className="lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden flex justify-center items-center">
+                  <Plus className="size-10 text-[#6D6D6D] group-hover: transition-colors duration-300" />
+                </div>
+                <span className="mt-4 text-base text-[#6D6D6D] group-hover: transition-colors duration-300 text-center leading-snug">
+                  Add profile
+                </span>
+              </div>
+            )}
           </div>
-        ))}
-        {profiles.length < 5 && (
-          <div
-            className="flex flex-col items-center cursor-pointer group w-36"
-            onClick={() => setView("adding")}
+          <button
+            onClick={() => setView(isManaging ? "select" : "managing")}
+            className={sharedBtnOutline}
           >
-            <div className="lg:size-36 size-25 border-4 border-[#1f1f1f] group-hover:border-white transition-all duration-300 overflow-hidden flex justify-center items-center">
-              <Plus className="size-10 text-[#6D6D6D] group-hover:text-white transition-colors duration-300" />
-            </div>
-            <span className="mt-4 text-base text-[#6D6D6D] group-hover:text-white transition-colors duration-300 text-center leading-snug">
-              Add profile
-            </span>
-          </div>
-        )}
-      </div>
-      <button
-        onClick={() => setView(isManaging ? "select" : "managing")}
-        className={sharedBtnOutline}
-      >
-        {isManaging ? "Done" : "Manage Profiles"}
-      </button>
-    </div>
+            {isManaging ? "Done" : "Manage Profiles"}
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

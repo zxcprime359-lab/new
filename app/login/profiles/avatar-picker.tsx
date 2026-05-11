@@ -8,13 +8,16 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Check, Pencil } from "lucide-react";
+import { useEffect } from "react";
 
 export function AvatarPicker({
   value,
   onChange,
+  random = false,
 }: {
   value: string;
   onChange: (type: string) => void;
+  random?: boolean;
 }) {
   const AVATAR_MAP: Record<string, React.ReactNode> = {
     svg1: <Profile1 />,
@@ -24,10 +27,19 @@ export function AvatarPicker({
   };
 
   const AVATAR_OPTIONS = ["svg1", "svg2", "svg3", "svg4"];
+
+  useEffect(() => {
+    if (!random) return;
+
+    const randomAvatar =
+      AVATAR_OPTIONS[Math.floor(Math.random() * AVATAR_OPTIONS.length)];
+
+    onChange(randomAvatar);
+  }, [random]);
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="relative w-24 h-24 border-4 border-white overflow-hidden mb-8 cursor-pointer group">
+        <div className="relative size-35 border-4 border-white overflow-hidden mb-8 cursor-pointer group">
           {AVATAR_MAP[value]}
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <Pencil className="text-white size-6" />

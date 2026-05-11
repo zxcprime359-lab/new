@@ -20,6 +20,7 @@ export default function WatchPage({
   hasActiveProfile: boolean;
 }) {
   const [open, setOpen] = useState(true);
+  const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
   const progress = Number(searchParams.get("progress") || 0);
   const { params } = useParams();
@@ -117,6 +118,12 @@ export default function WatchPage({
             account and remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
+
+        {loading && (
+          <div className="h-full w-full absolute inset-0 z-30 bg-black flex justify-center items-center lg:text-lg">
+            Initializing player, please wait...
+          </div>
+        )}
         <iframe
           height="100%"
           width="100%"
@@ -127,6 +134,7 @@ export default function WatchPage({
           }`}
           allowFullScreen
           loading="lazy"
+          onLoad={() => setLoading(false)}
         />
       </DialogContent>
     </Dialog>

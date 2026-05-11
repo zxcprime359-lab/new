@@ -18,8 +18,7 @@ export default function MovieCard({
     triggerOnce: true,
     threshold: 0.1,
   });
-  const searchParams = useSearchParams();
-  const paramsObject = Object.fromEntries(searchParams.entries());
+
   const [loaded, setLoaded] = useState(false);
 
   const main_genre = movieGenres.find((g) => g.id === movie.genre_ids[0])?.name;
@@ -44,7 +43,6 @@ export default function MovieCard({
       <Link
         href={{
           pathname: `/details/${media_type}/${movie.id}`,
-          query: paramsObject,
         }}
         prefetch={false}
       >

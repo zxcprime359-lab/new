@@ -108,7 +108,7 @@ export default function Navigation() {
               ({ icon: Icon, activeIcon: ActiveIcon, label, url }) => (
                 <Tooltip key={label}>
                   <TooltipTrigger asChild>
-                    <Link scroll={false} href={url} className="space-y-1.5">
+                    <Link href={url} className="space-y-1.5">
                       <button
                         className={cn(
                           "block hover:text-foreground transition-colors duration-200 cursor-pointer",

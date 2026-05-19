@@ -36,36 +36,42 @@ const navItems = [
     label: "Search",
     url: "/search",
     lucide: true,
+    scroll: true,
   },
   {
     icon: MovieIcon,
     activeIcon: MovieIcon,
     label: "Movies",
     url: "/movie",
+    scroll: false,
   },
   {
     icon: TvIcon,
     activeIcon: TvIcon,
     label: "TV Shows",
     url: "/tv",
+    scroll: false,
   },
   {
     icon: BookmarkIcon,
     activeIcon: BookmarkIcon,
     label: "Watchlist",
     url: "/watchlist",
+    scroll: false,
   },
   {
     icon: HistoryIcon,
     activeIcon: HistoryActiveIcon,
     label: "History",
     url: "/history",
+    scroll: false,
   },
   {
     icon: SettingsIcon,
     activeIcon: SettingsActiveIcon,
     label: "Settings",
     url: "/settings",
+    scroll: false,
   },
 ];
 const AVATAR_MAP: Record<string, React.ReactNode> = {
@@ -105,10 +111,10 @@ export default function Navigation() {
           </div>
           <div className="flex lg:flex-col lg:gap-8  w-full lg:w-auto justify-between ">
             {navItems.map(
-              ({ icon: Icon, activeIcon: ActiveIcon, label, url }) => (
+              ({ icon: Icon, activeIcon: ActiveIcon, label, url, scroll }) => (
                 <Tooltip key={label}>
                   <TooltipTrigger asChild>
-                    <Link href={url} className="space-y-1.5">
+                    <Link scroll={scroll} href={url} className="space-y-1.5">
                       <button
                         className={cn(
                           "block hover:text-foreground transition-colors duration-200 cursor-pointer",

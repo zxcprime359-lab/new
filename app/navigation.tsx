@@ -29,49 +29,55 @@ import {
 import { BookmarkIcon } from "@/components/icon/bookmark";
 import SearchModal from "./search-modal";
 const navItems = [
-  { icon: HomeIcon, activeIcon: HomeIcon, label: "Home", url: "/" },
+  {
+    icon: HomeIcon,
+    activeIcon: HomeIcon,
+    label: "Home",
+    url: "/",
+    scroll: true,
+  },
   {
     icon: Search,
     activeIcon: Search,
     label: "Search",
     url: "/search",
     lucide: true,
-    scroll: true,
+    scroll: false,
   },
   {
     icon: MovieIcon,
     activeIcon: MovieIcon,
     label: "Movies",
     url: "/movie",
-    scroll: false,
+    scroll: true,
   },
   {
     icon: TvIcon,
     activeIcon: TvIcon,
     label: "TV Shows",
     url: "/tv",
-    scroll: false,
+    scroll: true,
   },
   {
     icon: BookmarkIcon,
     activeIcon: BookmarkIcon,
     label: "Watchlist",
     url: "/watchlist",
-    scroll: false,
+    scroll: true,
   },
   {
     icon: HistoryIcon,
     activeIcon: HistoryActiveIcon,
     label: "History",
     url: "/history",
-    scroll: false,
+    scroll: true,
   },
   {
     icon: SettingsIcon,
     activeIcon: SettingsActiveIcon,
     label: "Settings",
     url: "/settings",
-    scroll: false,
+    scroll: true,
   },
 ];
 const AVATAR_MAP: Record<string, React.ReactNode> = {

@@ -9,6 +9,7 @@ import Navigation from "./navigation";
 import NextAuthProvider from "./provider-next-auth";
 import { Toaster } from "sonner";
 import Script from "next/script";
+
 const oxaniumHeading = Oxanium({
   subsets: ["latin"],
   variable: "--font-heading",
@@ -36,7 +37,6 @@ export const metadata: Metadata = {
     title: "ZXC",
   },
 };
-
 export default function RootLayout({
   children,
   modal,

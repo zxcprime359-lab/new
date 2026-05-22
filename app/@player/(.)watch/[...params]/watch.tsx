@@ -127,7 +127,7 @@ export default function WatchPage({
         <iframe
           height="100%"
           width="100%"
-          src={`https://cdn.zxcstream.xyz/player/${media_type}/${id}${
+          src={`https://api.zxcstream.xyz/player/${media_type}/${id}${
             media_type === "tv" ? `/${season}/${episode}` : ""
           }?back=true&domainAd=zxcprime.icu&load_progress=false&save_progress=false${
             progress > 0 ? `&load=${progress}` : ""

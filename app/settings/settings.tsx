@@ -92,10 +92,10 @@ export default function SettingsPage({
                     id: "privacy",
                     hide: !hasActiveProfile,
                   },
-                  {
-                    label: "Install",
-                    id: "install",
-                  },
+                  // {
+                  //   label: "Install",
+                  //   id: "install",
+                  // },
                 ]
                   .filter((item) => !item.hide)
                   .map((item, i) => (
@@ -210,7 +210,7 @@ export default function SettingsPage({
                 </div>
               </div>
             )}
-            {tab === "install" && (
+            {/* {tab === "install" && (
               <div className="h-full">
                 <header>
                   <h1 className="lg:text-lg text-base">Install App</h1>
@@ -235,7 +235,7 @@ export default function SettingsPage({
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             {tab === "performance" && (
               <div>

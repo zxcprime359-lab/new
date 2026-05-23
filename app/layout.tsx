@@ -9,6 +9,7 @@ import Navigation from "./navigation";
 import NextAuthProvider from "./provider-next-auth";
 import { Toaster } from "sonner";
 import Script from "next/script";
+import InstallButton from "@/components/ui/install";
 
 const oxaniumHeading = Oxanium({
   subsets: ["latin"],
@@ -30,12 +31,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ZXC[STREAM]",
   description: "Browse and discover movies",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "ZXC",
-  },
 };
 export default function RootLayout({
   children,
@@ -68,6 +63,32 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col custom-scrollbar">
         <Script
+          id="pwa-prompt-capture"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+        window.addEventListener('beforeinstallprompt', function(e) {
+          e.preventDefault();
+          window.__pwaPrompt = e;
+        });
+      `,
+          }}
+        />
+        <Script
+          id="sw-register"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js', {
+            scope: '/',
+            updateViaCache: 'none',
+          });
+        }
+      `,
+          }}
+        />
+        <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-FW6C6N98F8"
           strategy="afterInteractive"
@@ -93,6 +114,7 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <TooltipProvider>
+                <InstallButton />
                 <Navigation />
                 {children}
 

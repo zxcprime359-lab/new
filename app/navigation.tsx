@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRightLeft, LogIn, LogOut, Search } from "lucide-react";
+import { ArrowRightLeft, ListVideo, LogIn, LogOut, Search } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -59,6 +59,13 @@ const navItems = [
     scroll: true,
   },
   {
+    icon: ListVideo,
+    activeIcon: ListVideo,
+    label: "Reels",
+    url: "/reels",
+    scroll: true,
+  },
+  {
     icon: BookmarkIcon,
     activeIcon: BookmarkIcon,
     label: "Watchlist",
@@ -105,7 +112,7 @@ export default function Navigation() {
 
   return (
     !isLogin && (
-      <div className="fixed lg:inset-y-0 inset-x-0 lg:inset-x-[unset] bottom-0  left-0 z-40">
+      <div className="lg:fixed sticky lg:inset-y-0 inset-x-0 lg:inset-x-[unset] bottom-0  left-0 z-40">
         <SearchModal />
         <div className=" h-full  flex lg:flex-col justify-between items-center lg:px-10 px-6 lg:py-8 py-4 bg-background/80 lg:bg-transparent backdrop-blur-lg lg:backdrop-blur-none   ">
           <div className="size-9 hidden lg:block">

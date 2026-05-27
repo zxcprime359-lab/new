@@ -115,9 +115,9 @@ export default function RootLayout({
             >
               <TooltipProvider>
                 <InstallButton />
-                <Navigation />
-                {children}
 
+                {children}
+                <Navigation />
                 {modal}
                 {player}
                 {login}

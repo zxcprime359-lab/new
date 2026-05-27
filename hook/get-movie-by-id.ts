@@ -23,7 +23,7 @@ export default function useMovieById({
           params: {
             api_key: TMDB_API_KEY,
             append_to_response:
-              "credits,images,videos,recommendations,external_ids",
+              "credits,images,videos,recommendations,external_ids,reviews",
           },
         })
         .then((res) => res.data),

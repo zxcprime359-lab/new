@@ -34,7 +34,7 @@ export default function Trending({
 
   const trending = (data?.results || []).slice(0, 10);
   return (
-    <div className="lg:space-y-2 space-y-1">
+    <div className="lg:space-y-2 space-y-1 overflow-visible">
       <div className="flex justify-between lg:pr-4 pr-2">
         <h1 className="font-semibold lg:text-2xl  text-gray-300">
           TOP 10{"  "}
@@ -63,6 +63,7 @@ export default function Trending({
       <Swiper
         onSwiper={(swiper) => (swiperRef.current = swiper)}
         {...swiperConfigBackdrop}
+        className="overflow-visible!"
       >
         {isLoading ? (
           Array.from({ length: 10 }).map((_, idx) => (
@@ -79,8 +80,11 @@ export default function Trending({
           <></>
         ) : (
           trending.map((movie, idx) => (
-            <SwiperSlide key={movie.id} className="p-1 w-auto!">
-              <h1 className="absolute left-3 bottom-3 lg:text-8xl text-7xl font-bold z-20 text-gray-300 drop-shadow-lg [text-shadow:2px_2px_0_black,-2px_2px_0_black,2px_-2px_0_black,-2px_-2px_0_black]">
+            <SwiperSlide
+              key={movie.id}
+              className="group p-1 w-auto! overflow-visible"
+            >
+              <h1 className="group-hover:opacity-0 transition duration-100 absolute -left-6 bottom-0 lg:text-8xl text-7xl font-bold z-30 text-gray-300 drop-shadow-lg [text-shadow:2px_2px_0_black,-2px_2px_0_black,2px_-2px_0_black,-2px_-2px_0_black]">
                 {idx + 1}
               </h1>
               <BackdropCard
@@ -102,4 +106,5 @@ const swiperConfigBackdrop: SwiperOptions = {
   modules: [Navigation, Pagination, Keyboard, Scrollbar],
   slidesPerView: "auto",
   watchSlidesProgress: true,
+  spaceBetween: 30,
 };

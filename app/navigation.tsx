@@ -1,5 +1,12 @@
 "use client";
-import { ArrowRightLeft, ListVideo, LogIn, LogOut, Search } from "lucide-react";
+import {
+  ArrowRightLeft,
+  ListVideo,
+  LogIn,
+  LogOut,
+  Search,
+  Smile,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -58,13 +65,13 @@ const navItems = [
     url: "/tv",
     scroll: true,
   },
-  {
-    icon: ListVideo,
-    activeIcon: ListVideo,
-    label: "Reels",
-    url: "/reels",
-    scroll: true,
-  },
+  // {
+  //   icon: Smile,
+  //   activeIcon: Smile,
+  //   label: "Mood",
+  //   url: "/mood",
+  //   scroll: true,
+  // },
   {
     icon: BookmarkIcon,
     activeIcon: BookmarkIcon,

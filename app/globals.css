@@ -7,6 +7,13 @@
 .swiper-button-prev {
   display: none !important;
 }
+.swiper-slide {
+  z-index: 0;
+}
+
+.swiper-slide:hover {
+  z-index: 50;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

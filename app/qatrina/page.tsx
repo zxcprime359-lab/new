@@ -259,7 +259,7 @@ I love you so much, baby ko 😘`,
     },
     {
       title: "Birthday Message",
-      locked: true,
+      locked: false,
       date: "June 2026",
       content: `Happy birthday baby ko! Wala ng intro intro sobrang mahal na mahal kita agad, lagi mong akong napapasaya kahit tingin mo simpleng chat chat natin malaki na impact sakin non, tsaka pag naglalaro tayo kahit nauurat na tayo sa mga kakampi nating mga tolongges,hanga din ako sa pagiging nanay mo kay breanna pwede pang dagdagan ng isa pag okay na ang lahat, wish ko sana is umayon na sayo yung panahon kase ayoko nakikita kitang nahihirapan. Lagi lang ako nandito para sayo, iloveyousomuch baby ko.`,
     },

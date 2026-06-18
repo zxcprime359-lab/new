@@ -113,7 +113,8 @@ export default function Navigation() {
       router.push("/login/profiles");
     }
   };
-  const isLogin = pathname.startsWith("/login/profiles");
+  const isLogin =
+    pathname.startsWith("/login/profiles") || pathname.startsWith("/qatrina");
   const isLoggedIn = !!session;
   const avatarType = session?.user?.avatarType;
 

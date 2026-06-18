@@ -114,7 +114,7 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <TooltipProvider>
-                <InstallButton />
+                {/* <InstallButton /> */}
 
                 {children}
                 <Navigation />

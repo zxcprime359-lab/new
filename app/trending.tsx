@@ -84,7 +84,7 @@ export default function Trending({
               key={movie.id}
               className="group p-1 w-auto! overflow-visible"
             >
-              <h1 className="group-hover:opacity-0 transition duration-100 absolute -left-6 bottom-0 lg:text-8xl text-7xl font-bold z-30 text-gray-300 drop-shadow-lg [text-shadow:2px_2px_0_black,-2px_2px_0_black,2px_-2px_0_black,-2px_-2px_0_black]">
+              <h1 className="group-hover:opacity-0 transition duration-100 absolute lg:-left-6 -left-2 bottom-0 lg:text-8xl text-8xl font-bold z-30 text-gray-300 drop-shadow-lg [text-shadow:2px_2px_0_black,-2px_2px_0_black,2px_-2px_0_black,-2px_-2px_0_black]">
                 {idx + 1}
               </h1>
               <BackdropCard

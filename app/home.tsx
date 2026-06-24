@@ -128,7 +128,7 @@ export default function Home({
         media_type_action={media_type_action}
       />
       <div className="relative bg-background z-10 space-y-10 lg:space-y-3">
-        <div className="lg:pl-35 pl-2 space-y-15 pb-10">
+        <div className="lg:pl-35 pl-2 space-y-15 pb-10 overflow-hidden  lg:pt-5">
           {/* TOP 10 */}
 
           {media_type_action === "all" && (
